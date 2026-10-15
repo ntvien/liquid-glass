@@ -33,9 +33,11 @@ Rồi thêm thư viện:
 
 ```kotlin
 dependencies {
-    implementation("com.github.ntvien.liquid-glass:liquidglass:0.1.0")
+    implementation("com.github.ntvien:liquid-glass:v0.1.0")
 }
 ```
+
+JitPack lấy tên tag git làm phiên bản, nên phải giữ chữ `v`. Các bản phát hành: [tag trên GitHub](https://github.com/ntvien/liquid-glass/tags).
 
 Yêu cầu: minSdk 26, compileSdk 37, Jetpack Compose (BOM 2026.09.00 trở lên), Kotlin 2.4 trở lên.
 

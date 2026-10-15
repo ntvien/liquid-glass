@@ -36,9 +36,11 @@ Then the dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.github.ntvien.liquid-glass:liquidglass:0.1.0")
+    implementation("com.github.ntvien:liquid-glass:v0.1.0")
 }
 ```
+
+JitPack uses the git tag as the version, so the `v` is part of it. Releases: [GitHub tags](https://github.com/ntvien/liquid-glass/tags).
 
 Requirements: minSdk 26, compileSdk 37, Jetpack Compose (BOM 2026.09.00 or newer), Kotlin 2.4 or newer.
 
