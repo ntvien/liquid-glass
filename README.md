@@ -1,21 +1,21 @@
 # Liquid Glass for Jetpack Compose
 
-Liquid glass surfaces, a floating tab bar and a segmented control for Android, built on Jetpack Compose. The glass
+Liquid glass surfaces, a floating tab bar, a segmented control and a droplet menu for Android, built on Jetpack Compose. The glass
 refracts what is behind it (lens, chromatic aberration, highlight), reacts to touch (swell, tilt, glint) and adapts to
 the device: full glass on Android 13+, lighter glass on Android 12, a cheap frosted look on older or low-RAM devices and
 in Battery Saver.
 
 Tiếng Việt: [README.vi.md](README.vi.md)
 
-| Stacked tab labels | Selected-only tab labels |
-|---|---|
-| ![Stacked](docs/sample-stacked.png) | ![Selected only](docs/sample-selected-only.png) |
+| Stacked tab labels | Selected-only tab labels | Droplet menu |
+|---|---|---|
+| ![Stacked](docs/sample-stacked.png) | ![Selected only](docs/sample-selected-only.png) | ![Menu](docs/sample-menu.png) |
 
 *Sample app on the Android 16 emulator.*
 
 - [Install](#install)
 - [Quick start](#quick-start)
-- [Guide](#guide): theme · brand colors · reduce effects · screens · glass blocks · tab bar · segmented control · device tiers · do and don't · troubleshooting
+- [Guide](#guide): theme · brand colors · reduce effects · screens · glass blocks · tab bar · segmented control · menu · device tiers · do and don't · troubleshooting
 - [API](#api) · [Device tiers](#device-tiers) · [Performance rules](#performance-rules) · [Accessibility](#accessibility)
 
 ## Install
@@ -110,7 +110,8 @@ fun BrandTheme(dark: Boolean, content: @Composable () -> Unit) {
 |---|---|
 | `content`, `contentMuted` | text and icons on glass, unselected tabs |
 | `accent`, `accentSoft`, `onAccent` | selected stacked tab, accent button |
-| `selectedFill`, `selectedContent` | selected pill (selected-only tab bar, segmented control) |
+| `selectedFill`, `selectedContent` | selected pill of the selected-only tab bar |
+| `raisedFill` | light glass raised above a track: the selected segment of the segmented control |
 | `badge` | tab badge dot |
 | `glassFill`, `glassFillStrong`, `glassFillOpaque`, `glassStroke`, `glassHighlight`, `glassShadow` | the glass itself and its frosted fallback |
 
@@ -124,12 +125,19 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
     LiquidGlassTheme(
         look = GlassLook.Auto,          // Rich on high-end devices, Optimized elsewhere
         reduceEffects = reduceEffects,  // from your settings screen: true = frosted glass everywhere
+        overlaySamplesContent = null,   // null: tab bar and menus refract the scrolling content on Android 13+
         content = content,
     )
 }
 ```
 
 Offer a "Reduce effects" switch in your settings for people who prefer less transparency or want to save battery.
+
+**Floating glass refracts the content.** By default, on every Android 13+ device the tab bar and menus refract the
+scrolling content under them (text and images bend at the edges), not only the background. This is what makes them look
+like glass instead of white plastic.
+- **Cost:** about 10 ms per frame while scrolling on mid-range devices.
+- **Turn it off:** pass `overlaySamplesContent = false` if your app's benchmark is over budget.
 
 ### 4. A screen with glass
 
@@ -378,10 +386,59 @@ AnimatedContent(
 ) { selected -> RangeContent(selected) }
 ```
 
+By default the track is clear glass and the selected option is a **light glass pill raised above it**
+(`GlassColors.raisedFill`), as on iOS 26; the selected label is bolder. Other looks through the color parameters:
+
+```kotlin
+// Accent pill
+LiquidSegmentedControl(
+    options, range, { range = it },
+    indicatorColor = LiquidGlassTheme.colors.accent,
+    selectedTextColor = LiquidGlassTheme.colors.onAccent,
+)
+```
+
 More than 4 options or long labels: use a horizontally scrolling row of chips (`LiquidSurface` with
 `GlassDefaults.frost()` and `PillShape`) instead.
 
-### 8. Adapt to the device
+### 8. Menu
+
+A glass button that opens an iOS 26 style menu:
+- **Open:** the menu grows out of the button like a glass droplet, overshoots a little and bounces back; the items
+  appear one after another.
+- **Choose:** tap an item, or press the button, drag the finger down to an item and release. A light haptic tick marks
+  every item the finger crosses.
+- **Close:** tap outside, press Back, or choose an item; the menu shrinks back into the button.
+
+```kotlin
+LiquidMenuButton(
+    items = listOf(
+        LiquidMenuItem("Rename", editIcon, onClick = onRename),
+        LiquidMenuItem("Share", shareIcon, onClick = onShare),
+        LiquidMenuDivider,
+        LiquidMenuItem("Delete", trashIcon, destructive = true, onClick = onDelete),
+    ),
+    contentDescription = "More",
+    modifier = Modifier.size(44.dp),
+) { Image(moreIcon, contentDescription = null) }
+```
+
+| Entry or parameter | Notes |
+|---|---|
+| `LiquidMenuItem(label, icon, destructive, enabled, onClick)` | `destructive = true` draws it in the badge color (delete); `enabled = false` dims it and it cannot be chosen |
+| `LiquidMenuDivider` | line between groups |
+| `menuWidth` | width of the menu, 250 dp by default |
+
+Placement:
+- The menu opens below the button, or above it when there is no room below.
+- It lines up with the side of the screen the button is on.
+
+Put the button anywhere inside a `LiquidGlassScene`: the menu draws on the scene's top layer (above the tab bar) as
+real glass. Outside a scene it opens in a popup with the frosted look.
+
+Make the button at least 44 dp.
+
+### 9. Adapt to the device
 
 Read the chosen tier when your own decorations should follow it:
 
@@ -407,7 +464,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Problem | Cause and fix |
 |---|---|
 | Glass looks flat and frosted, no lens | No `LiquidGlassTheme` around it, the element is outside a `LiquidGlassScene`, the device runs Android 12 or lower, Battery Saver is on, or `reduceEffects = true` |
-| Lens but no blur behind the tab bar | Expected with `GlassLook.Optimized`: the bar refracts only the background. `look = GlassLook.Rich` forces content sampling (costs ~10 ms/frame on mid-range devices) |
+| Tab bar looks like white plastic, no lens | Background too pale (use strong color blobs, 35–60 % alpha, see `sample/SampleArt.kt`), Android 12 (no lens), or `overlaySamplesContent = false` was passed |
 | Last list item hidden behind the tab bar | Add `LiquidTabBarDefaults.contentBottomPadding()` to the list's bottom padding |
 | Tab bar disappears when typing | Intended. Pass `hideWhenImeVisible = false` to keep it |
 | Scrolling stutters | Too much real glass on screen, background redrawn every frame, or a debug build. See [Performance rules](#performance-rules) |
@@ -417,7 +474,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 
 | API | What it does |
 |---|---|
-| `LiquidGlassTheme(colors, look, reduceEffects)` | Root. Chooses `GlassQuality` and `GlassLook` once, follows Battery Saver. Read values with `LiquidGlassTheme.colors / quality / look` |
+| `LiquidGlassTheme(colors, look, reduceEffects, overlaySamplesContent)` | Root. Chooses `GlassQuality` and `GlassLook` once, follows Battery Saver. Read values with `LiquidGlassTheme.colors / quality / look` |
 | `GlassColors.light()` / `dark()` / `copy(...)` | Colors of glass and components |
 | `LiquidGlassScene(background, overlay, content)` | Frame of a screen with glass. One per screen |
 | `Modifier.liquidGlass(style, shape, interaction)` | Draws glass behind any element |
@@ -426,7 +483,8 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | `rememberGlassInteraction()` | Press effect: swell, tilt toward the finger, glint |
 | `LiquidSurface` | A glass block; with `onClick` it is a button |
 | `LiquidTabBar` + `LiquidTab` + `LiquidTabLabels` + `LiquidTabBarDefaults` | Floating tab bar with a water-droplet indicator, `Stacked` or `SelectedOnly` labels, haptics, reselect, badge, hides with the keyboard |
-| `LiquidSegmentedControl` | In-screen tabs for 2–4 short options, same droplet |
+| `LiquidSegmentedControl` | In-screen tabs for 2–4 short options, same droplet, raised light pill by default |
+| `LiquidMenuButton` + `LiquidMenuItem` + `LiquidMenuDivider` | Glass button that opens a droplet menu: grows from the button, staggered items, drag to choose, Back closes it |
 
 ## Device tiers
 
@@ -438,8 +496,8 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 
 | `GlassLook` | Default for | Difference |
 |---|---|---|
-| `Rich` | high-end devices (Media Performance Class ≥ 13) | shadows on every block, accent buttons are real glass, the tab bar refracts scrolling content |
-| `Optimized` | every other device | shadows only on floating chrome and accent buttons, accent buttons are solid with a sheen, the tab bar refracts only the background |
+| `Rich` | high-end devices (Media Performance Class ≥ 13) | shadows on every block, accent buttons are real glass, the tab bar refracts scrolling content (also blurred on Android 12) |
+| `Optimized` | every other device | shadows only on floating chrome and accent buttons, accent buttons are solid with a sheen; the tab bar still refracts scrolling content on Android 13+ |
 
 `GlassLook.Auto` (default) picks between them.
 

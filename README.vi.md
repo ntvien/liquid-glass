@@ -9,9 +9,9 @@ Thư viện Android (Jetpack Compose) gồm các khối kính lỏng, thanh tab 
 
 English: [README.md](README.md)
 
-| Nhãn tab kiểu Stacked | Nhãn tab kiểu SelectedOnly |
-|---|---|
-| ![Stacked](docs/sample-stacked.png) | ![Selected only](docs/sample-selected-only.png) |
+| Nhãn tab kiểu Stacked | Nhãn tab kiểu SelectedOnly | Menu giọt nước |
+|---|---|---|
+| ![Stacked](docs/sample-stacked.png) | ![Selected only](docs/sample-selected-only.png) | ![Menu](docs/sample-menu.png) |
 
 *App mẫu chạy trên emulator Android 16.*
 
@@ -112,7 +112,8 @@ fun BrandTheme(dark: Boolean, content: @Composable () -> Unit) {
 |---|---|
 | `content`, `contentMuted` | chữ và icon trên kính, tab chưa chọn |
 | `accent`, `accentSoft`, `onAccent` | tab đang chọn (kiểu Stacked), nút màu nhấn |
-| `selectedFill`, `selectedContent` | viên đang chọn (thanh tab SelectedOnly, tab trong màn) |
+| `selectedFill`, `selectedContent` | viên đang chọn của thanh tab SelectedOnly |
+| `raisedFill` | viên kính sáng nổi trên rãnh: ô đang chọn của tab trong màn |
 | `badge` | chấm báo trên tab |
 | `glassFill`, `glassFillStrong`, `glassFillOpaque`, `glassStroke`, `glassHighlight`, `glassShadow` | bản thân tấm kính và kính mờ dự phòng |
 
@@ -126,12 +127,17 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
     LiquidGlassTheme(
         look = GlassLook.Auto,          // máy cao cấp: Rich, máy khác: Optimized
         reduceEffects = reduceEffects,  // lấy từ màn Cài đặt: true = kính mờ ở mọi nơi
+        overlaySamplesContent = null,   // null: thanh tab, menu khúc xạ cả nội dung đang cuộn trên Android 13+
         content = content,
     )
 }
 ```
 
 Nên có công tắc **"Giảm hiệu ứng"** trong Cài đặt cho người thích ít trong suốt hoặc muốn tiết kiệm pin.
+
+**Kính nổi khúc xạ nội dung:** mặc định trên mọi máy Android 13+, thanh tab và menu khúc xạ cả nội dung đang cuộn phía dưới (chữ, ảnh bị bẻ cong ở mép), không chỉ nền. Đây là thứ làm kính trông như kính thật thay vì nhựa trắng.
+- **Cái giá:** khoảng 10 ms mỗi khung hình khi cuộn trên máy tầm trung.
+- **Cách tắt:** nếu benchmark của app vượt ngưỡng, truyền `overlaySamplesContent = false`.
 
 ### 4. Một màn có kính
 
@@ -383,9 +389,54 @@ AnimatedContent(
 ) { selected -> RangeContent(selected) }
 ```
 
+Mặc định: rãnh kính trong, ô đang chọn là **viên kính sáng nổi lên** (màu `GlassColors.raisedFill`) như iOS 26, chữ ô chọn đậm hơn. Kiểu khác đổi qua tham số màu:
+
+```kotlin
+// Viên màu nhấn
+LiquidSegmentedControl(
+    options, range, { range = it },
+    indicatorColor = LiquidGlassTheme.colors.accent,
+    selectedTextColor = LiquidGlassTheme.colors.onAccent,
+)
+```
+
 Hơn 4 lựa chọn hoặc chữ dài: dùng hàng chip cuộn ngang (`LiquidSurface` với `GlassDefaults.frost()` và `PillShape`).
 
-### 8. Điều chỉnh theo máy
+### 8. Menu giọt nước
+
+Nút kính mở một menu kiểu iOS 26:
+- **Mở:** menu mọc ra từ nút như giọt kính, phồng quá đà một chút rồi nảy về; các mục hiện lần lượt.
+- **Chọn:** chạm một mục, hoặc giữ nút rồi kéo ngón tay xuống mục và thả. Đi qua mỗi mục máy rung nhẹ.
+- **Đóng:** chạm ra ngoài, bấm Back, hoặc chọn xong; menu co về nút.
+
+```kotlin
+LiquidMenuButton(
+    items = listOf(
+        LiquidMenuItem("Rename", editIcon, onClick = onRename),
+        LiquidMenuItem("Share", shareIcon, onClick = onShare),
+        LiquidMenuDivider,
+        LiquidMenuItem("Delete", trashIcon, destructive = true, onClick = onDelete),
+    ),
+    contentDescription = "More",
+    modifier = Modifier.size(44.dp),
+) { Image(moreIcon, contentDescription = null) }
+```
+
+| Mục | Ghi chú |
+|---|---|
+| `LiquidMenuItem(label, icon, destructive, enabled, onClick)` | `destructive = true` vẽ màu đỏ (xóa); `enabled = false` làm mờ, không chọn được |
+| `LiquidMenuDivider` | đường kẻ ngăn nhóm |
+| `menuWidth` | bề rộng menu, mặc định 250 dp |
+
+Vị trí:
+- Menu mở xuống dưới nút; nếu hết chỗ thì mở lên trên.
+- Menu căn theo phía màn hình mà nút đang nằm.
+
+Đặt nút ở đâu cũng được trong `LiquidGlassScene`: menu tự vẽ lên lớp trên cùng (phủ cả thanh tab) và là kính thật. Ngoài scene, menu mở trong popup với kiểu kính mờ.
+
+Nút nên có kích thước từ 44 dp trở lên.
+
+### 9. Điều chỉnh theo máy
 
 Đọc mức kính máy đang dùng khi trang trí riêng của bạn cũng cần theo:
 
@@ -411,7 +462,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Hiện tượng | Nguyên nhân và cách sửa |
 |---|---|
 | Kính phẳng, mờ, không có loe | Thiếu `LiquidGlassTheme`, khối kính nằm ngoài `LiquidGlassScene`, máy Android 12 trở xuống, đang bật Tiết kiệm pin, hoặc `reduceEffects = true` |
-| Có loe nhưng thanh tab không làm mờ nội dung phía sau | Đúng thiết kế của `GlassLook.Optimized`: thanh tab chỉ khúc xạ nền. `look = GlassLook.Rich` thì lấy mẫu cả nội dung (tốn ~10 ms/khung trên máy tầm trung) |
+| Thanh tab trông như nhựa trắng, không thấy loe | Nền quá nhạt (dùng đốm màu đậm 35–60%, xem `sample/SampleArt.kt`); máy Android 12 (không có loe); hoặc đã truyền `overlaySamplesContent = false` |
 | Mục cuối danh sách bị thanh tab che | Thêm `LiquidTabBarDefaults.contentBottomPadding()` vào padding đáy của danh sách |
 | Thanh tab biến mất khi gõ phím | Đúng thiết kế. Truyền `hideWhenImeVisible = false` để giữ lại |
 | Cuộn bị giật | Quá nhiều kính thật trên màn, nền vẽ lại mỗi khung, hoặc đang chạy bản debug. Xem phần hiệu năng trong [README.md](README.md#performance-rules) |

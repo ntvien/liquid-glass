@@ -137,13 +137,13 @@ public enum class GlassLook {
 
     /**
      * Lens on every block, shadows on every block, accent buttons are real glass, the tab bar refracts the scrolling
-     * content. Prettiest, most expensive.
+     * content (also on Android 12, blurred). Prettiest, most expensive.
      */
     Rich,
 
     /**
      * Tuned from measurements on mid-range devices: shadows only on floating chrome and accent buttons, accent buttons
-     * are solid with a sheen, the tab bar refracts only the background.
+     * are solid with a sheen. The tab bar still refracts the scrolling content on Android 13+.
      */
     Optimized,
 }
@@ -162,12 +162,17 @@ internal val LocalGlassLook = staticCompositionLocalOf { GlassLook.Optimized }
  * @param look [GlassLook.Auto] by default.
  * @param reduceEffects wire this to a "Reduce effects" switch in your settings: `true` turns glass into the frosted
  *   fallback ([GlassQuality.Off]).
+ * @param overlaySamplesContent whether floating glass (tab bar, menus) refracts the scrolling content, not only the
+ *   background. `null` (default): yes with [GlassQuality.Full], and with [GlassLook.Rich] on Android 12 too. It costs
+ *   about 10 ms per frame while scrolling on mid-range devices; pass `false` if your benchmark is over budget.
+ *   Ignored (always off) with [GlassQuality.Off].
  */
 @Composable
 public fun LiquidGlassTheme(
     colors: GlassColors = if (isSystemInDarkTheme()) GlassColors.dark() else GlassColors.light(),
     look: GlassLook = GlassLook.Auto,
     reduceEffects: Boolean = false,
+    overlaySamplesContent: Boolean? = null,
     content: @Composable () -> Unit,
 ) {
     val powerSave = rememberPowerSaveMode()
@@ -176,14 +181,20 @@ public fun LiquidGlassTheme(
         if (look == GlassLook.Auto) (if (isHighEndDevice()) GlassLook.Rich else GlassLook.Optimized) else look
     }
     val rich = resolved == GlassLook.Rich
-    val overlaySamplesContent = if (rich) quality != GlassQuality.Off else quality == GlassQuality.Full && isHighEndDevice()
+    // Refracting the content is what makes floating glass look like glass over a calm background.
+    val samplesContent = when {
+        quality == GlassQuality.Off -> false
+        overlaySamplesContent != null -> overlaySamplesContent
+        rich -> true
+        else -> quality == GlassQuality.Full
+    }
     val styles = remember(colors, rich) { GlassStyles.from(colors, rich) }
     CompositionLocalProvider(
         LocalGlassColors provides colors,
         LocalGlassStyles provides styles,
         LocalGlassLook provides resolved,
         LocalGlassQuality provides quality,
-        LocalGlassOverlaySamplesContent provides overlaySamplesContent,
+        LocalGlassOverlaySamplesContent provides samplesContent,
         LocalGlassShadows provides !powerSave,
         content = content,
     )

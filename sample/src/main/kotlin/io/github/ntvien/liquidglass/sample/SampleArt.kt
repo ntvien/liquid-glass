@@ -31,10 +31,21 @@ import kotlin.math.roundToInt
 @Composable
 fun GradientBackground(dark: Boolean, modifier: Modifier = Modifier) {
     val base = if (dark) Color(0xFF121119) else Color(0xFFF4F1EB)
+    // Strong enough blobs (35–60 %) that the lens has something to bend; a pale background makes glass look like plastic.
     val blobs = if (dark) {
-        listOf(Blob(Color(0x995B6CFF), 0.1f, 0.08f, 0.9f), Blob(Color(0x80FF6FA8), 0.95f, 0.45f, 0.8f), Blob(Color(0x6640D9B0), 0.3f, 0.95f, 0.9f))
+        listOf(
+            Blob(Color(0x738EA2FF), 0.08f, 0.1f, 0.85f),
+            Blob(Color(0x66FFC24D), 0.95f, 0.32f, 0.7f),
+            Blob(Color(0x59FF7A6B), 0.2f, 0.62f, 0.75f),
+            Blob(Color(0x4D40C29B), 0.85f, 0.92f, 0.8f),
+        )
     } else {
-        listOf(Blob(Color(0x803B57D6), 0.1f, 0.08f, 0.9f), Blob(Color(0x66FF6FA8), 0.95f, 0.45f, 0.8f), Blob(Color(0x5540D9B0), 0.3f, 0.95f, 0.9f))
+        listOf(
+            Blob(Color(0x8C3B57D6), 0.08f, 0.1f, 0.85f),
+            Blob(Color(0x99FFC24D), 0.95f, 0.32f, 0.7f),
+            Blob(Color(0x73FF7A6B), 0.2f, 0.62f, 0.75f),
+            Blob(Color(0x5940C29B), 0.85f, 0.92f, 0.8f),
+        )
     }
     Spacer(
         modifier
@@ -48,7 +59,14 @@ fun GradientBackground(dark: Boolean, modifier: Modifier = Modifier) {
                     blobs.forEach { b ->
                         val center = Offset(b.x * w, b.y * h)
                         val radius = b.radius * w
-                        drawCircle(Brush.radialGradient(listOf(b.color, b.color.copy(alpha = 0f)), center, radius), radius, center)
+                        val brush = Brush.radialGradient(
+                            0f to b.color,
+                            0.55f to b.color.copy(alpha = b.color.alpha * 0.6f),
+                            1f to b.color.copy(alpha = 0f),
+                            center = center,
+                            radius = radius,
+                        )
+                        drawCircle(brush, radius, center)
                     }
                 }
                 val dst = IntSize(size.width.roundToInt(), size.height.roundToInt())
@@ -88,6 +106,24 @@ object SampleIcons {
     val Plus: ImageVector = icon("plus") {
         moveTo(12f, 5f); lineTo(12f, 19f)
         moveTo(5f, 12f); lineTo(19f, 12f)
+    }
+    val More: ImageVector = icon("more") {
+        moveTo(6f, 12f); lineTo(6.01f, 12f)
+        moveTo(12f, 12f); lineTo(12.01f, 12f)
+        moveTo(18f, 12f); lineTo(18.01f, 12f)
+    }
+    val Edit: ImageVector = icon("edit") {
+        moveTo(4f, 20f); lineTo(8f, 19f); lineTo(19f, 8f); lineTo(16f, 5f); lineTo(5f, 16f); close()
+    }
+    val Share: ImageVector = icon("share") {
+        moveTo(12f, 15f); lineTo(12f, 4f)
+        moveTo(8f, 8f); lineTo(12f, 4f); lineTo(16f, 8f)
+        moveTo(6f, 12f); lineTo(6f, 20f); lineTo(18f, 20f); lineTo(18f, 12f)
+    }
+    val Trash: ImageVector = icon("trash") {
+        moveTo(4f, 7f); lineTo(20f, 7f)
+        moveTo(9f, 7f); lineTo(9f, 4f); lineTo(15f, 4f); lineTo(15f, 7f)
+        moveTo(6f, 7f); lineTo(7f, 20f); lineTo(17f, 20f); lineTo(18f, 7f)
     }
 
     private fun icon(name: String, block: PathBuilder.() -> Unit): ImageVector =

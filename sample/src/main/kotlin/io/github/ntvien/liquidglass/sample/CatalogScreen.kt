@@ -1,8 +1,10 @@
 package io.github.ntvien.liquidglass.sample
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +40,9 @@ import androidx.compose.ui.unit.sp
 import io.github.ntvien.liquidglass.GlassDefaults
 import io.github.ntvien.liquidglass.LiquidGlassScene
 import io.github.ntvien.liquidglass.LiquidGlassTheme
+import io.github.ntvien.liquidglass.component.LiquidMenuButton
+import io.github.ntvien.liquidglass.component.LiquidMenuDivider
+import io.github.ntvien.liquidglass.component.LiquidMenuItem
 import io.github.ntvien.liquidglass.component.LiquidSegmentedControl
 import io.github.ntvien.liquidglass.component.LiquidSurface
 import io.github.ntvien.liquidglass.component.LiquidTab
@@ -60,6 +66,7 @@ fun CatalogScreen() {
     var labels by remember { mutableIntStateOf(0) }
     var range by remember { mutableIntStateOf(0) }
     var likes by remember { mutableIntStateOf(0) }
+    var lastAction by remember { mutableStateOf("none") }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
@@ -96,7 +103,23 @@ fun CatalogScreen() {
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = top + 16.dp, bottom = LiquidTabBarDefaults.contentBottomPadding()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            item { BasicText("Liquid Glass", style = title) }
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    BasicText("Liquid Glass", style = title, modifier = Modifier.weight(1f))
+                    LiquidMenuButton(
+                        items = listOf(
+                            LiquidMenuItem("Rename", SampleIcons.Edit) { lastAction = "Rename" },
+                            LiquidMenuItem("Share", SampleIcons.Share) { lastAction = "Share" },
+                            LiquidMenuItem("Duplicate", enabled = false) {},
+                            LiquidMenuDivider,
+                            LiquidMenuItem("Delete", SampleIcons.Trash, destructive = true) { lastAction = "Delete" },
+                        ),
+                        contentDescription = "More",
+                        modifier = Modifier.size(44.dp),
+                    ) { SampleIcon(SampleIcons.More, colors.content) }
+                }
+            }
+            item { BasicText("Last menu action: $lastAction", style = muted) }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     BasicText("Tab bar labels", style = muted)
@@ -144,19 +167,37 @@ fun CatalogScreen() {
                 }
             }
             item { BasicText("Quality: ${LiquidGlassTheme.quality} · Look: ${LiquidGlassTheme.look}", style = muted) }
-            items(List(12) { it }) { i ->
-                LiquidSurface(
-                    Modifier.fillMaxWidth(),
-                    style = GlassDefaults.frost(),
-                    shape = GlassDefaults.ControlShape,
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        SampleIcon(SampleIcons.Heart, colors.contentMuted)
-                        Spacer(Modifier.size(12.dp))
-                        BasicText("Frost row ${i + 1}: lists never use real glass", style = body)
-                    }
-                }
+            items(List(3) { it }) { i -> FrostRow(i, colors.contentMuted, body) }
+            // Solid colored rows right above the bottom at launch: scrolled under the tab bar, their text visibly bends.
+            items(ColorRows) { (label, color) ->
+                Box(
+                    Modifier.fillMaxWidth().height(56.dp).background(color, GlassDefaults.ControlShape).padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.CenterStart,
+                ) { BasicText(label, style = body.copy(color = Color.White, fontWeight = FontWeight.SemiBold)) }
             }
+            items(List(9) { it + 3 }) { i -> FrostRow(i, colors.contentMuted, body) }
+        }
+    }
+}
+
+private val ColorRows = listOf(
+    "Text bends under the glass" to Color(0xFF3B57D6),
+    "Scroll me under the tab bar" to Color(0xFFE8833A),
+    "Lens at the edges" to Color(0xFFD9475A),
+    "Glass refracts content" to Color(0xFF1F9E7A),
+)
+
+@Composable
+private fun FrostRow(i: Int, iconTint: Color, body: TextStyle) {
+    LiquidSurface(
+        Modifier.fillMaxWidth(),
+        style = GlassDefaults.frost(),
+        shape = GlassDefaults.ControlShape,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SampleIcon(SampleIcons.Heart, iconTint)
+            Spacer(Modifier.size(12.dp))
+            BasicText("Frost row ${i + 1}: lists never use real glass", style = body)
         }
     }
 }

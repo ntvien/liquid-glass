@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -26,6 +28,26 @@ internal class GlassBackdrops(val background: LayerBackdrop, val overlay: LayerB
 
 internal val LocalGlassBackdrops = staticCompositionLocalOf<GlassBackdrops?> { null }
 internal val LocalGlassLayer = staticCompositionLocalOf { GlassLayer.Content }
+
+/**
+ * Top layer of the scene, above the overlay (tab bar). Menus are called from anywhere in the content but draw here, so
+ * they cover everything and still sample the scene like other floating glass.
+ */
+@Stable
+internal class GlassSceneTop {
+    internal val entries = mutableStateListOf<Pair<Any, @Composable () -> Unit>>()
+
+    fun show(key: Any, content: @Composable () -> Unit) {
+        val i = entries.indexOfFirst { it.first === key }
+        if (i >= 0) entries[i] = key to content else entries += key to content
+    }
+
+    fun remove(key: Any) {
+        entries.removeAll { it.first === key }
+    }
+}
+
+internal val LocalGlassSceneTop = staticCompositionLocalOf<GlassSceneTop?> { null }
 
 /**
  * Frame of every screen that has glass. Use exactly ONE per screen.
@@ -56,7 +78,8 @@ public fun LiquidGlassScene(
     val backdrops = remember(backgroundBackdrop, overlayBackdrop, overlaySamplesContent) {
         GlassBackdrops(backgroundBackdrop, if (overlaySamplesContent) overlayBackdrop else backgroundBackdrop)
     }
-    CompositionLocalProvider(LocalGlassBackdrops provides backdrops) {
+    val top = remember { GlassSceneTop() }
+    CompositionLocalProvider(LocalGlassBackdrops provides backdrops, LocalGlassSceneTop provides top) {
         Box(modifier.fillMaxSize()) {
             // Recorded as the overlay backdrop: background + content (capable devices only).
             Box(if (overlaySamplesContent) Modifier.fillMaxSize().layerBackdrop(overlayBackdrop) else Modifier.fillMaxSize()) {
@@ -69,6 +92,7 @@ public fun LiquidGlassScene(
             }
             CompositionLocalProvider(LocalGlassLayer provides GlassLayer.Overlay) {
                 Box(Modifier.fillMaxSize(), content = overlay)
+                Box(Modifier.fillMaxSize()) { top.entries.forEach { (k, c) -> key(k) { c() } } }
             }
         }
     }

@@ -85,6 +85,8 @@ dependencies {
     api(libs.compose.foundation)
     implementation(libs.compose.animation)
     implementation(libs.kyant.shapes)
+    // BackHandler: the system Back gesture closes LiquidMenu.
+    implementation(libs.androidx.activity.compose)
 }
 
 publishing {

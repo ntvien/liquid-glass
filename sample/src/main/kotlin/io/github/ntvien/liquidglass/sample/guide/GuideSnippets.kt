@@ -56,6 +56,9 @@ import io.github.ntvien.liquidglass.GlassLook
 import io.github.ntvien.liquidglass.GlassQuality
 import io.github.ntvien.liquidglass.LiquidGlassScene
 import io.github.ntvien.liquidglass.LiquidGlassTheme
+import io.github.ntvien.liquidglass.component.LiquidMenuButton
+import io.github.ntvien.liquidglass.component.LiquidMenuDivider
+import io.github.ntvien.liquidglass.component.LiquidMenuItem
 import io.github.ntvien.liquidglass.component.LiquidSegmentedControl
 import io.github.ntvien.liquidglass.component.LiquidSurface
 import io.github.ntvien.liquidglass.component.LiquidTab
@@ -122,6 +125,7 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
     LiquidGlassTheme(
         look = GlassLook.Auto,          // Rich on high-end devices, Optimized elsewhere
         reduceEffects = reduceEffects,  // from your settings screen: true = frosted glass everywhere
+        overlaySamplesContent = null,   // null: tab bar and menus refract the scrolling content on Android 13+
         content = content,
     )
 }
@@ -362,6 +366,17 @@ fun SegmentedWithContent() {
     }
 }
 
+@Composable
+fun AccentSegmented(options: List<String>) {
+    var range by rememberSaveable { mutableIntStateOf(0) }
+    // An accent pill instead of the default light glass pill.
+    LiquidSegmentedControl(
+        options, range, { range = it },
+        indicatorColor = LiquidGlassTheme.colors.accent,
+        selectedTextColor = LiquidGlassTheme.colors.onAccent,
+    )
+}
+
 // ---------------------------------------------------------------- 8. Adapt to the device
 
 @Composable
@@ -371,4 +386,20 @@ fun QualityAware() {
     if (showSparkles) {
         Box(Modifier.size(24.dp))
     }
+}
+
+// ---------------------------------------------------------------- 7b. Menu
+
+@Composable
+fun MoreMenu(onRename: () -> Unit, onShare: () -> Unit, onDelete: () -> Unit) {
+    LiquidMenuButton(
+        items = listOf(
+            LiquidMenuItem("Rename", SampleIcons.Edit, onClick = onRename),
+            LiquidMenuItem("Share", SampleIcons.Share, onClick = onShare),
+            LiquidMenuDivider,
+            LiquidMenuItem("Delete", SampleIcons.Trash, destructive = true, onClick = onDelete),
+        ),
+        contentDescription = "More",
+        modifier = Modifier.size(44.dp),
+    ) { Image(SampleIcons.More, contentDescription = null) }
 }
