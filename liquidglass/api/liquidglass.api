@@ -1,0 +1,167 @@
+public final class io/github/ntvien/liquidglass/ComposableSingletons$GlassSceneKt {
+	public static final field INSTANCE Lio/github/ntvien/liquidglass/ComposableSingletons$GlassSceneKt;
+	public fun <init> ()V
+	public final fun getLambda$557157519$liquidglass ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class io/github/ntvien/liquidglass/GlassColors {
+	public static final field $stable I
+	public static final field Companion Lio/github/ntvien/liquidglass/GlassColors$Companion;
+	public synthetic fun <init> (JJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun copy-dVHXu7A (JJJJJJJJJJJJJJ)Lio/github/ntvien/liquidglass/GlassColors;
+	public static synthetic fun copy-dVHXu7A$default (Lio/github/ntvien/liquidglass/GlassColors;JJJJJJJJJJJJJJILjava/lang/Object;)Lio/github/ntvien/liquidglass/GlassColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccent-0d7_KjU ()J
+	public final fun getAccentSoft-0d7_KjU ()J
+	public final fun getBadge-0d7_KjU ()J
+	public final fun getContent-0d7_KjU ()J
+	public final fun getContentMuted-0d7_KjU ()J
+	public final fun getGlassFill-0d7_KjU ()J
+	public final fun getGlassFillOpaque-0d7_KjU ()J
+	public final fun getGlassFillStrong-0d7_KjU ()J
+	public final fun getGlassHighlight-0d7_KjU ()J
+	public final fun getGlassShadow-0d7_KjU ()J
+	public final fun getGlassStroke-0d7_KjU ()J
+	public final fun getOnAccent-0d7_KjU ()J
+	public final fun getSelectedContent-0d7_KjU ()J
+	public final fun getSelectedFill-0d7_KjU ()J
+	public fun hashCode ()I
+}
+
+public final class io/github/ntvien/liquidglass/GlassColors$Companion {
+	public final fun dark ()Lio/github/ntvien/liquidglass/GlassColors;
+	public final fun light ()Lio/github/ntvien/liquidglass/GlassColors;
+}
+
+public final class io/github/ntvien/liquidglass/GlassDefaults {
+	public static final field $stable I
+	public static final field INSTANCE Lio/github/ntvien/liquidglass/GlassDefaults;
+	public final fun accent (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
+	public final fun card (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
+	public final fun chrome (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
+	public final fun control (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
+	public final fun frost (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
+	public final fun getCardShape ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getControlShape ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getPillShape ()Landroidx/compose/ui/graphics/Shape;
+}
+
+public final class io/github/ntvien/liquidglass/GlassInteraction {
+	public static final field $stable I
+	public final fun getDragOffset-F1C5BW0 ()J
+	public final fun getPressProgress ()F
+}
+
+public final class io/github/ntvien/liquidglass/GlassInteractionKt {
+	public static final fun rememberGlassInteraction (FFLandroidx/compose/runtime/Composer;II)Lio/github/ntvien/liquidglass/GlassInteraction;
+}
+
+public final class io/github/ntvien/liquidglass/GlassKind : java/lang/Enum {
+	public static final field Frost Lio/github/ntvien/liquidglass/GlassKind;
+	public static final field Liquid Lio/github/ntvien/liquidglass/GlassKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/ntvien/liquidglass/GlassKind;
+	public static fun values ()[Lio/github/ntvien/liquidglass/GlassKind;
+}
+
+public final class io/github/ntvien/liquidglass/GlassLook : java/lang/Enum {
+	public static final field Auto Lio/github/ntvien/liquidglass/GlassLook;
+	public static final field Optimized Lio/github/ntvien/liquidglass/GlassLook;
+	public static final field Rich Lio/github/ntvien/liquidglass/GlassLook;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/ntvien/liquidglass/GlassLook;
+	public static fun values ()[Lio/github/ntvien/liquidglass/GlassLook;
+}
+
+public final class io/github/ntvien/liquidglass/GlassQuality : java/lang/Enum {
+	public static final field BlurOnly Lio/github/ntvien/liquidglass/GlassQuality;
+	public static final field Full Lio/github/ntvien/liquidglass/GlassQuality;
+	public static final field Off Lio/github/ntvien/liquidglass/GlassQuality;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/ntvien/liquidglass/GlassQuality;
+	public static fun values ()[Lio/github/ntvien/liquidglass/GlassQuality;
+}
+
+public final class io/github/ntvien/liquidglass/GlassSceneKt {
+	public static final fun GlassScene (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/ntvien/liquidglass/GlassStyle {
+	public static final field $stable I
+	public synthetic fun <init> (Lio/github/ntvien/liquidglass/GlassKind;FFFZZZJJFFFFJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/github/ntvien/liquidglass/GlassKind;FFFZZZJJFFFFJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun copy-4xbixY8 (Lio/github/ntvien/liquidglass/GlassKind;FFFZZZJJFFFFJJ)Lio/github/ntvien/liquidglass/GlassStyle;
+	public static synthetic fun copy-4xbixY8$default (Lio/github/ntvien/liquidglass/GlassStyle;Lio/github/ntvien/liquidglass/GlassKind;FFFZZZJJFFFFJJILjava/lang/Object;)Lio/github/ntvien/liquidglass/GlassStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBlur-D9Ej5fM ()F
+	public final fun getChromaticAberration ()Z
+	public final fun getContentColor-0d7_KjU ()J
+	public final fun getDepthEffect ()Z
+	public final fun getFallbackSheen ()F
+	public final fun getFallbackSurface-0d7_KjU ()J
+	public final fun getHighlightAlpha ()F
+	public final fun getHighlightWidth-D9Ej5fM ()F
+	public final fun getKind ()Lio/github/ntvien/liquidglass/GlassKind;
+	public final fun getLensAmount-D9Ej5fM ()F
+	public final fun getLensHeight-D9Ej5fM ()F
+	public final fun getShadowColor-0d7_KjU ()J
+	public final fun getShadowRadius-D9Ej5fM ()F
+	public final fun getSurface-0d7_KjU ()J
+	public final fun getVibrancy ()Z
+	public fun hashCode ()I
+}
+
+public final class io/github/ntvien/liquidglass/LiquidGlassKt {
+	public static final fun liquidGlass (Landroidx/compose/ui/Modifier;Lio/github/ntvien/liquidglass/GlassStyle;Landroidx/compose/ui/graphics/Shape;Lio/github/ntvien/liquidglass/GlassInteraction;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+}
+
+public final class io/github/ntvien/liquidglass/LiquidGlassTheme {
+	public static final field $stable I
+	public static final field INSTANCE Lio/github/ntvien/liquidglass/LiquidGlassTheme;
+	public final fun getColors (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassColors;
+	public final fun getLook (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassLook;
+	public final fun getQuality (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassQuality;
+}
+
+public final class io/github/ntvien/liquidglass/LiquidGlassThemeKt {
+	public static final fun LiquidGlassTheme (Lio/github/ntvien/liquidglass/GlassColors;Lio/github/ntvien/liquidglass/GlassLook;ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/ntvien/liquidglass/component/ComposableSingletons$LiquidTabBarKt {
+	public static final field INSTANCE Lio/github/ntvien/liquidglass/component/ComposableSingletons$LiquidTabBarKt;
+	public fun <init> ()V
+	public final fun getLambda$-2039508180$liquidglass ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class io/github/ntvien/liquidglass/component/LiquidSegmentedControlKt {
+	public static final fun LiquidSegmentedControl (Ljava/util/List;ILkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/ntvien/liquidglass/component/LiquidSurfaceKt {
+	public static final fun LiquidSurface (Landroidx/compose/ui/Modifier;Lio/github/ntvien/liquidglass/GlassStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function0;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/ntvien/liquidglass/component/LiquidTab {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/vector/ImageVector;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/vector/ImageVector;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBadge ()Z
+	public final fun getIcon ()Landroidx/compose/ui/graphics/vector/ImageVector;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getLabel ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public final class io/github/ntvien/liquidglass/component/LiquidTabBarKt {
+	public static final fun LiquidTabBar (Ljava/util/List;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/github/ntvien/liquidglass/component/LiquidTabLabels;Lkotlin/jvm/functions/Function1;ZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/ntvien/liquidglass/component/LiquidTabLabels : java/lang/Enum {
+	public static final field SelectedOnly Lio/github/ntvien/liquidglass/component/LiquidTabLabels;
+	public static final field Stacked Lio/github/ntvien/liquidglass/component/LiquidTabLabels;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/ntvien/liquidglass/component/LiquidTabLabels;
+	public static fun values ()[Lio/github/ntvien/liquidglass/component/LiquidTabLabels;
+}
+

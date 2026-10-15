@@ -1,0 +1,22 @@
+[versions]
+agp = "9.3.3"
+kotlin = "2.4.20"
+composeBom = "2026.09.00"
+activityCompose = "1.13.0"
+kyantShapes = "1.2.1"
+binaryCompatibilityValidator = "0.18.2"
+
+[libraries]
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+binary-compatibility-validator = { group = "org.jetbrains.kotlinx", name = "binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
+kyant-shapes = { group = "io.github.kyant0", name = "shapes", version.ref = "kyantShapes" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

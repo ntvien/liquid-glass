@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build library, check public API, build sample
+        run: ./gradlew :liquidglass:assembleRelease :liquidglass:apiCheck :sample:assembleDebug
+      - name: Lint
+        run: ./gradlew :liquidglass:lintRelease
