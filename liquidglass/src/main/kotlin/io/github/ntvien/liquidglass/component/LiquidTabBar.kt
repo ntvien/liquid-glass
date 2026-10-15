@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -112,8 +115,8 @@ public enum class LiquidTabLabels {
  * - With system font scale ≥ 130 % only icons are shown (accessibility labels stay).
  * - Slides away while the keyboard is open ([hideWhenImeVisible]).
  *
- * Place it in the `overlay` of [io.github.ntvien.liquidglass.GlassScene], aligned to the bottom, and give scrolling
- * content enough bottom padding so the last item is not covered.
+ * Place it in the `overlay` of [io.github.ntvien.liquidglass.LiquidGlassScene], aligned to the bottom, and give scrolling
+ * content [LiquidTabBarDefaults.contentBottomPadding] so the last item is not covered.
  *
  * @param tabs 2–5 tabs.
  * @param selectedKey key of the selected tab.
@@ -124,7 +127,7 @@ public enum class LiquidTabLabels {
  * @param labelStyle label style for [LiquidTabLabels.Stacked].
  * @param selectedLabelStyle label style inside the selected pill for [LiquidTabLabels.SelectedOnly].
  * @param action optional round button to the right of the bar, e.g. a [LiquidSurface] with
- *   [GlassDefaults.chrome] and [GlassDefaults.PillShape], 64 dp.
+ *   [GlassDefaults.chrome], [GlassDefaults.PillShape] and size [LiquidTabBarDefaults.Height].
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -183,7 +186,7 @@ public fun LiquidTabBar(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(Modifier.weight(1f).height(BAR_HEIGHT)) {
+            Box(Modifier.weight(1f).height(LiquidTabBarDefaults.Height)) {
                 // The glass is its own layer: droplet and icon changes do not rebuild it.
                 LiquidSurface(
                     modifier = Modifier.matchParentSize(),
@@ -199,6 +202,20 @@ public fun LiquidTabBar(
             action?.invoke()
         }
     }
+}
+
+/** Sizes of [LiquidTabBar], for laying out content around it. */
+public object LiquidTabBarDefaults {
+    /** Height of the bar. Use it for a round action button next to the bar too. */
+    public val Height: Dp = 64.dp
+
+    /**
+     * Bottom padding for scrolling content behind the bar so the last item ends above it:
+     * system navigation bar + bar + gaps.
+     */
+    @Composable
+    public fun contentBottomPadding(): Dp =
+        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + Height + BAR_BOTTOM + 16.dp
 }
 
 // ---------------------------------------------------------------- Stacked
@@ -396,7 +413,6 @@ private fun Badge(color: Color, modifier: Modifier) {
     Box(modifier.size(8.dp).background(color, GlassDefaults.PillShape))
 }
 
-private val BAR_HEIGHT = 64.dp
 private val BAR_INSET = 16.dp
 private val BAR_BOTTOM = 12.dp
 private val ITEM_HEIGHT = 52.dp

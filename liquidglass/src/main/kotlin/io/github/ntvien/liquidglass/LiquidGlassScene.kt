@@ -31,7 +31,7 @@ internal val LocalGlassLayer = staticCompositionLocalOf { GlassLayer.Content }
  * Frame of every screen that has glass. Use exactly ONE per screen.
  *
  * ```
- * GlassScene(
+ * LiquidGlassScene(
  *     background = { MyBackground() },   // draw it once (e.g. into a bitmap): glass samples it every frame
  *     overlay = { LiquidTabBar(..., Modifier.align(Alignment.BottomCenter)) },
  * ) {
@@ -44,7 +44,7 @@ internal val LocalGlassLayer = staticCompositionLocalOf { GlassLayer.Content }
  * @param content the screen content. Glass inside it samples only [background].
  */
 @Composable
-public fun GlassScene(
+public fun LiquidGlassScene(
     modifier: Modifier = Modifier,
     background: @Composable BoxScope.() -> Unit,
     overlay: @Composable BoxScope.() -> Unit = {},

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,12 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.ntvien.liquidglass.GlassDefaults
-import io.github.ntvien.liquidglass.GlassScene
+import io.github.ntvien.liquidglass.LiquidGlassScene
 import io.github.ntvien.liquidglass.LiquidGlassTheme
 import io.github.ntvien.liquidglass.component.LiquidSegmentedControl
 import io.github.ntvien.liquidglass.component.LiquidSurface
 import io.github.ntvien.liquidglass.component.LiquidTab
 import io.github.ntvien.liquidglass.component.LiquidTabBar
+import io.github.ntvien.liquidglass.component.LiquidTabBarDefaults
 import io.github.ntvien.liquidglass.component.LiquidTabLabels
 import kotlinx.coroutines.launch
 
@@ -67,7 +67,7 @@ fun CatalogScreen() {
     val body = TextStyle(fontSize = 15.sp, lineHeight = 21.sp, color = colors.content)
     val muted = TextStyle(fontSize = 13.sp, lineHeight = 18.sp, color = colors.contentMuted)
 
-    GlassScene(
+    LiquidGlassScene(
         background = { GradientBackground(dark) },
         overlay = {
             LiquidTabBar(
@@ -78,7 +78,7 @@ fun CatalogScreen() {
                 labels = if (labels == 0) LiquidTabLabels.Stacked else LiquidTabLabels.SelectedOnly,
                 action = {
                     LiquidSurface(
-                        modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(LiquidTabBarDefaults.Height),
                         style = GlassDefaults.chrome(),
                         shape = GlassDefaults.PillShape,
                         contentPadding = PaddingValues(20.dp),
@@ -91,10 +91,9 @@ fun CatalogScreen() {
         },
     ) {
         val top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-        val bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = top + 16.dp, bottom = bottom + 64.dp + 12.dp + 24.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = top + 16.dp, bottom = LiquidTabBarDefaults.contentBottomPadding()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item { BasicText("Liquid Glass", style = title) }

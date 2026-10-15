@@ -1,7 +1,7 @@
-public final class io/github/ntvien/liquidglass/ComposableSingletons$GlassSceneKt {
-	public static final field INSTANCE Lio/github/ntvien/liquidglass/ComposableSingletons$GlassSceneKt;
+public final class io/github/ntvien/liquidglass/ComposableSingletons$LiquidGlassSceneKt {
+	public static final field INSTANCE Lio/github/ntvien/liquidglass/ComposableSingletons$LiquidGlassSceneKt;
 	public fun <init> ()V
-	public final fun getLambda$557157519$liquidglass ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$620589263$liquidglass ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/github/ntvien/liquidglass/GlassColors {
@@ -82,10 +82,6 @@ public final class io/github/ntvien/liquidglass/GlassQuality : java/lang/Enum {
 	public static fun values ()[Lio/github/ntvien/liquidglass/GlassQuality;
 }
 
-public final class io/github/ntvien/liquidglass/GlassSceneKt {
-	public static final fun GlassScene (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-}
-
 public final class io/github/ntvien/liquidglass/GlassStyle {
 	public static final field $stable I
 	public synthetic fun <init> (Lio/github/ntvien/liquidglass/GlassKind;FFFZZZJJFFFFJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -113,6 +109,10 @@ public final class io/github/ntvien/liquidglass/GlassStyle {
 
 public final class io/github/ntvien/liquidglass/LiquidGlassKt {
 	public static final fun liquidGlass (Landroidx/compose/ui/Modifier;Lio/github/ntvien/liquidglass/GlassStyle;Landroidx/compose/ui/graphics/Shape;Lio/github/ntvien/liquidglass/GlassInteraction;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+}
+
+public final class io/github/ntvien/liquidglass/LiquidGlassSceneKt {
+	public static final fun LiquidGlassScene (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/github/ntvien/liquidglass/LiquidGlassTheme {
@@ -151,6 +151,13 @@ public final class io/github/ntvien/liquidglass/component/LiquidTab {
 	public final fun getKey ()Ljava/lang/String;
 	public final fun getLabel ()Ljava/lang/String;
 	public fun hashCode ()I
+}
+
+public final class io/github/ntvien/liquidglass/component/LiquidTabBarDefaults {
+	public static final field $stable I
+	public static final field INSTANCE Lio/github/ntvien/liquidglass/component/LiquidTabBarDefaults;
+	public final fun contentBottomPadding-chRvn1I (Landroidx/compose/runtime/Composer;I)F
+	public final fun getHeight-D9Ej5fM ()F
 }
 
 public final class io/github/ntvien/liquidglass/component/LiquidTabBarKt {

@@ -25,4 +25,6 @@ dependencies {
     implementation(project(":liquidglass"))
     implementation(platform(libs.compose.bom))
     implementation(libs.androidx.activity.compose)
+    // Only for the Navigation example in guide/GuideSnippets.kt.
+    implementation(libs.androidx.navigation.compose)
 }

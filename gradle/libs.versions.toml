@@ -3,6 +3,7 @@ agp = "9.3.3"
 kotlin = "2.4.20"
 composeBom = "2026.09.00"
 activityCompose = "1.13.0"
+navigation = "2.10.2"
 kyantShapes = "1.2.1"
 binaryCompatibilityValidator = "0.18.2"
 
@@ -12,6 +13,7 @@ compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-animation = { group = "androidx.compose.animation", name = "animation" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 binary-compatibility-validator = { group = "org.jetbrains.kotlinx", name = "binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
 kyant-shapes = { group = "io.github.kyant0", name = "shapes", version.ref = "kyantShapes" }

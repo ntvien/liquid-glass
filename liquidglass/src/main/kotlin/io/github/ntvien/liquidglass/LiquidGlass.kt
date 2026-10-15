@@ -29,7 +29,7 @@ import io.github.ntvien.liquidglass.internal.backdrop.shadow.Shadow
  * - Liquid + [GlassQuality.BlurOnly]: highlight + shadow (+ blur when sampling content). No AGSL on Android 12.
  * - [GlassKind.Frost] or [GlassQuality.Off]: translucent fill + sheen + stroke, never samples the background.
  *
- * Must be inside a [GlassScene] to sample anything; outside it the element falls back to frost.
+ * Must be inside a [LiquidGlassScene] to sample anything; outside it the element falls back to frost.
  *
  * Performance budget per screen: at most 6 real (Liquid) glass elements, the tab bar included. Use
  * [GlassDefaults.frost] for repeated items.
