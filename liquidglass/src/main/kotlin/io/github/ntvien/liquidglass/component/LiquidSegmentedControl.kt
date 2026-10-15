@@ -22,6 +22,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
@@ -29,6 +31,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,17 +50,23 @@ import kotlin.math.roundToInt
 /**
  * In-screen tabs for 2–4 short options ("Day · Week · Month").
  *
- * A frosted pill track (cheap, it lives in the content) with the selected option shown as the same water droplet as
- * [LiquidTabBar]: tap and it slides over with a small bounce, drag sideways and it follows the finger. Labels
- * cross-fade by droplet position, a light haptic tick confirms the change. Accessibility services see a group of
- * selectable tabs.
+ * A clear frosted track with the selected option raised as a light glass pill (iOS 26 style). The pill is the same
+ * water droplet as [LiquidTabBar]: tap and it lifts into glass with a lens, slides over with a small bounce and
+ * settles; drag sideways and it follows the finger. Labels cross-fade by droplet position, the selected label is
+ * bolder, a light haptic tick confirms the change. Accessibility services see a group of selectable tabs.
+ *
+ * Other looks through the colors, e.g. a strong accent pill:
+ * `indicatorColor = LiquidGlassTheme.colors.accent, selectedTextColor = LiquidGlassTheme.colors.onAccent`.
  *
  * For more than 4 options or long labels use a horizontally scrolling row of chips instead.
  *
  * @param options visible labels, also read by accessibility services.
  * @param selectedIndex index of the selected option.
  * @param onSelect called with the new index (not called when the selected option is tapped again).
- * @param textStyle label style; color comes from [LiquidGlassTheme.colors].
+ * @param indicatorColor fill of the selected pill at rest (default [io.github.ntvien.liquidglass.GlassColors.raisedFill]).
+ * @param selectedTextColor label color of the selected option.
+ * @param textColor label color of the other options.
+ * @param textStyle label style; the selected label is drawn one weight bolder.
  */
 @Composable
 public fun LiquidSegmentedControl(
@@ -64,7 +74,10 @@ public fun LiquidSegmentedControl(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = TextStyle(fontSize = 13.sp, lineHeight = 17.sp, fontWeight = FontWeight.SemiBold),
+    indicatorColor: Color = LiquidGlassTheme.colors.raisedFill,
+    selectedTextColor: Color = LiquidGlassTheme.colors.content,
+    textColor: Color = LiquidGlassTheme.colors.contentMuted,
+    textStyle: TextStyle = TextStyle(fontSize = 13.sp, lineHeight = 17.sp, fontWeight = FontWeight.Medium),
 ) {
     val colors = LiquidGlassTheme.colors
     val density = LocalDensity.current
@@ -92,8 +105,9 @@ public fun LiquidSegmentedControl(
         modifier
             .fillMaxWidth()
             .height(SEGMENTED_HEIGHT)
-            .liquidGlass(GlassDefaults.frost(), GlassDefaults.PillShape)
-            .padding(4.dp)
+            // Clear track: lighter than the frost preset so the raised pill reads as the only solid thing.
+            .liquidGlass(GlassDefaults.frost().copy(fallbackSurface = colors.glassFill, fallbackSheen = 0.25f), GlassDefaults.PillShape)
+            .padding(3.dp)
             .onSizeChanged {
                 slot[0] = it.width.toFloat() / options.size.coerceAtLeast(1)
                 slotPx = slot[0]
@@ -107,7 +121,15 @@ public fun LiquidSegmentedControl(
                 .offset { IntOffset((droplet.value * slot[0]).roundToInt(), 0) }
                 .width(with(density) { slotPx.toDp() })
                 .fillMaxHeight()
-                .droplet(droplet, GlassDefaults.PillShape, idleColor = colors.selectedFill),
+                // Soft lift under an opaque pill; a translucent pill (dark theme) would show its own shadow through.
+                .then(
+                    if (indicatorColor.alpha >= 0.9f) {
+                        Modifier.shadow(2.dp, GlassDefaults.PillShape, clip = false, ambientColor = colors.glassShadow, spotColor = colors.glassShadow)
+                    } else {
+                        Modifier
+                    }
+                )
+                .droplet(droplet, GlassDefaults.PillShape, idleColor = indicatorColor),
         )
         Row(Modifier.fillMaxSize()) {
             options.forEachIndexed { index, label ->
@@ -122,20 +144,23 @@ public fun LiquidSegmentedControl(
                             indication = null,
                             role = Role.Tab,
                             onClick = { choose(index) },
-                        ),
+                        )
+                        // The name lives on the segment itself: Compose drops a text layer drawn at alpha 0 from the
+                        // accessibility tree, so the selected segment would lose its name if it relied on its children.
+                        .semantics { contentDescription = label },
                     contentAlignment = Alignment.Center,
                 ) {
-                    // Two label layers cross-fade with the droplet; the second is hidden from accessibility services.
+                    // Two label layers cross-fade with the droplet. Drawing only: accessibility reads the segment.
                     BasicText(
                         label,
-                        style = textStyle.copy(color = colors.content),
+                        style = textStyle.copy(color = textColor),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.graphicsLayer { alpha = 1f - highlight() },
+                        modifier = Modifier.graphicsLayer { alpha = 1f - highlight() }.clearAndSetSemantics {},
                     )
                     BasicText(
                         label,
-                        style = textStyle.copy(color = colors.selectedContent),
+                        style = textStyle.copy(color = selectedTextColor, fontWeight = FontWeight.SemiBold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.graphicsLayer { alpha = highlight() }.clearAndSetSemantics {},

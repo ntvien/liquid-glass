@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
  * @property glassStroke 1 dp stroke of the frosted fallback.
  * @property glassHighlight sheen of the frosted fallback.
  * @property glassShadow soft shadow under floating glass.
+ * @property raisedFill light glass raised above a track: the selected segment of [io.github.ntvien.liquidglass.component.LiquidSegmentedControl].
  */
 @Immutable
 public class GlassColors(
@@ -55,6 +56,7 @@ public class GlassColors(
     public val glassStroke: Color,
     public val glassHighlight: Color,
     public val glassShadow: Color,
+    public val raisedFill: Color,
 ) {
     /** Returns a copy with the given colors replaced. */
     public fun copy(
@@ -72,14 +74,15 @@ public class GlassColors(
         glassStroke: Color = this.glassStroke,
         glassHighlight: Color = this.glassHighlight,
         glassShadow: Color = this.glassShadow,
+        raisedFill: Color = this.raisedFill,
     ): GlassColors = GlassColors(
         content, contentMuted, accent, accentSoft, onAccent, selectedFill, selectedContent, badge,
-        glassFill, glassFillStrong, glassFillOpaque, glassStroke, glassHighlight, glassShadow,
+        glassFill, glassFillStrong, glassFillOpaque, glassStroke, glassHighlight, glassShadow, raisedFill,
     )
 
     private fun values(): List<Color> = listOf(
         content, contentMuted, accent, accentSoft, onAccent, selectedFill, selectedContent, badge,
-        glassFill, glassFillStrong, glassFillOpaque, glassStroke, glassHighlight, glassShadow,
+        glassFill, glassFillStrong, glassFillOpaque, glassStroke, glassHighlight, glassShadow, raisedFill,
     )
 
     override fun equals(other: Any?): Boolean = other is GlassColors && values() == other.values()
@@ -103,6 +106,7 @@ public class GlassColors(
             glassStroke = Color(0x80FFFFFF),
             glassHighlight = Color(0xA6FFFFFF),
             glassShadow = Color(0x331D1B24),
+            raisedFill = Color(0xF7FFFFFF),
         )
 
         /** Neutral colors for dark backgrounds. */
@@ -121,6 +125,7 @@ public class GlassColors(
             glassStroke = Color(0x33FFFFFF),
             glassHighlight = Color(0x59FFFFFF),
             glassShadow = Color(0x66000000),
+            raisedFill = Color(0x40FFFFFF),
         )
     }
 }

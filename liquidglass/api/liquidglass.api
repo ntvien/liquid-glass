@@ -7,9 +7,9 @@ public final class io/github/ntvien/liquidglass/ComposableSingletons$LiquidGlass
 public final class io/github/ntvien/liquidglass/GlassColors {
 	public static final field $stable I
 	public static final field Companion Lio/github/ntvien/liquidglass/GlassColors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun copy-dVHXu7A (JJJJJJJJJJJJJJ)Lio/github/ntvien/liquidglass/GlassColors;
-	public static synthetic fun copy-dVHXu7A$default (Lio/github/ntvien/liquidglass/GlassColors;JJJJJJJJJJJJJJILjava/lang/Object;)Lio/github/ntvien/liquidglass/GlassColors;
+	public synthetic fun <init> (JJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun copy-sQnm1Ko (JJJJJJJJJJJJJJJ)Lio/github/ntvien/liquidglass/GlassColors;
+	public static synthetic fun copy-sQnm1Ko$default (Lio/github/ntvien/liquidglass/GlassColors;JJJJJJJJJJJJJJJILjava/lang/Object;)Lio/github/ntvien/liquidglass/GlassColors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAccent-0d7_KjU ()J
 	public final fun getAccentSoft-0d7_KjU ()J
@@ -23,6 +23,7 @@ public final class io/github/ntvien/liquidglass/GlassColors {
 	public final fun getGlassShadow-0d7_KjU ()J
 	public final fun getGlassStroke-0d7_KjU ()J
 	public final fun getOnAccent-0d7_KjU ()J
+	public final fun getRaisedFill-0d7_KjU ()J
 	public final fun getSelectedContent-0d7_KjU ()J
 	public final fun getSelectedFill-0d7_KjU ()J
 	public fun hashCode ()I
@@ -134,7 +135,7 @@ public final class io/github/ntvien/liquidglass/component/ComposableSingletons$L
 }
 
 public final class io/github/ntvien/liquidglass/component/LiquidSegmentedControlKt {
-	public static final fun LiquidSegmentedControl (Ljava/util/List;ILkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;II)V
+	public static final fun LiquidSegmentedControl-JIo3BtE (Ljava/util/List;ILkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;JJJLandroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/github/ntvien/liquidglass/component/LiquidSurfaceKt {
