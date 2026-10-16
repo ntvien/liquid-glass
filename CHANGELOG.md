@@ -3,7 +3,7 @@
 All notable changes to this project are documented here. The project follows [Semantic Versioning](https://semver.org/);
 while the version is 0.x the public API may still change between minor versions.
 
-## Unreleased
+## 0.2.0 — 2026-10-16
 
 - Baseline profile shipped in the AAR (`baseline-prof.txt`, library classes only): the library's code is compiled ahead
   of time when an app is installed from Google Play or through ProfileInstaller.
