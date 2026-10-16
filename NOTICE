@@ -23,3 +23,5 @@ Changes made to the original code:
   6. GlassInteraction.kt, Droplet.kt: spring parameters exposed, optional blur on the droplet, wrapped for reuse.
   7. highlight/HighlightStyle.kt: corner radii of continuous shapes (RoundedRectangularShape) are read from the shape
      instead of falling back to a capsule.
+  8. effects/Lens.kt, internal/Shaders.kt: the refraction shaders take a saturation uniform, so the vibrancy color
+     filter (effects/ColorFilter.kt) is applied inside the lens pass instead of as a separate pass before it.

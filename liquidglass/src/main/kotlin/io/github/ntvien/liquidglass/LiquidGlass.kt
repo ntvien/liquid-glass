@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import io.github.ntvien.liquidglass.internal.backdrop.drawBackdrop
 import io.github.ntvien.liquidglass.internal.backdrop.effects.blur
 import io.github.ntvien.liquidglass.internal.backdrop.effects.lens
+import io.github.ntvien.liquidglass.internal.backdrop.effects.VibrancySaturation
 import io.github.ntvien.liquidglass.internal.backdrop.effects.vibrancy
 import io.github.ntvien.liquidglass.internal.backdrop.highlight.Highlight
 import io.github.ntvien.liquidglass.internal.backdrop.shadow.Shadow
@@ -77,6 +78,7 @@ public fun Modifier.liquidGlass(
     // scrolling. Blur only when the glass samples scrolling content.
     val samplesContent = backdrop !== backdrops.background
     val blurRadius = if (samplesContent) style.blur else 0.dp
+    val useLens = allowLens && style.lensHeight > 0.dp && style.lensAmount > 0.dp
     return this
         // Glass gets its own layer: when something else on screen changes, idle glass keeps its recorded drawing.
         // With an interaction, drawBackdrop adds graphicsLayer(layerBlock) itself.
@@ -85,14 +87,17 @@ public fun Modifier.liquidGlass(
             backdrop = backdrop,
             shape = { shape },
             effects = {
-                if (style.vibrancy) vibrancy()
+                // With a lens the saturation is applied by the lens shader: a separate color filter pass costs a full
+                // render pass of the backdrop on every frame the backdrop changes.
+                if (style.vibrancy && !useLens) vibrancy()
                 if (blurRadius > 0.dp) blur(blurRadius.toPx())
-                if (allowLens && style.lensHeight > 0.dp && style.lensAmount > 0.dp) {
+                if (useLens) {
                     lens(
                         refractionHeight = style.lensHeight.toPx(),
                         refractionAmount = style.lensAmount.toPx(),
                         depthEffect = style.depthEffect,
                         chromaticAberration = style.chromaticAberration,
+                        saturation = if (style.vibrancy) VibrancySaturation else 1f,
                     )
                 }
             },

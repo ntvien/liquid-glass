@@ -20,6 +20,10 @@ while the version is 0.x the public API may still change between minor versions.
   no longer rebuilt (lens, blur, shadow, rim) on every frame. It is measured at a few fixed widths and squeezed the
   rest of the way (at most 6 %, only while it moves); on a tab it has its exact width. Looks the same. Galaxy S23
   Ultra, switching tabs: frames late by more than 4 ms 18 → 14 %, janky 90 → 82 %.
+- Glass with a lens applies its vibrancy (saturation) inside the lens shader instead of a separate color filter pass
+  before it. Looks the same (with `overlaySamplesContent` the saturation now follows the blur: at most a few levels
+  of difference along strong color edges). Galaxy S23 Ultra, scrolling: CPU frame time P90 8.5 → 8.2 ms; with the
+  `Rich` look janky 91 → 87 %.
 - `benchmark`: tab switching with labels on the selected tab only, menu open/close, each with a glass-off control.
 
 ## 0.2.0 — 2026-10-16

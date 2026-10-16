@@ -42,7 +42,10 @@ internal fun BackdropEffectScope.colorControls(
     colorFilter(colorControlsColorFilter(brightness, contrast, saturation))
 }
 
-private val VibrantColorFilter = colorControlsColorFilter(saturation = 1.5f)
+/** Saturation of [vibrancy]. With a lens, pass it to lens(saturation = ...) instead: one pass less. */
+internal const val VibrancySaturation = 1.5f
+
+private val VibrantColorFilter = colorControlsColorFilter(saturation = VibrancySaturation)
 
 internal fun BackdropEffectScope.vibrancy() {
     colorFilter(VibrantColorFilter)
