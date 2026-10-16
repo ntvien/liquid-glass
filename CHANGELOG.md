@@ -5,6 +5,18 @@ while the version is 0.x the public API may still change between minor versions.
 
 ## Unreleased
 
+- Baseline profile shipped in the AAR (`baseline-prof.txt`, library classes only): the library's code is compiled ahead
+  of time when an app is installed from Google Play or through ProfileInstaller.
+- `benchmark` module: macrobenchmarks of the sample (cold startup with and without the profile, scrolling under the tab
+  bar, switching tabs and dragging the droplet, switching segments; on Android 13+ also with the `Rich` look, without
+  content sampling, and a glass-off control) and the baseline profile generator.
+- Sample: release build minified with R8 and signed with the debug key so benchmark builds can be installed; it reads
+  the look, content sampling and "reduce effects" from intent extras set by the benchmarks.
+- README: measured numbers of the library itself in "Performance rules".
+- `LiquidSegmentedControl`: selected segment is a raised light glass pill (new `GlassColors.raisedFill`), new
+  `indicatorColor` / `selectedTextColor` / `textColor` parameters.
+- Fix: the selected segment of `LiquidSegmentedControl` had no accessibility name (label layer at alpha 0 is dropped
+  from the tree).
 - `LiquidMenuButton`, `LiquidMenuItem`, `LiquidMenuDivider`: iOS 26 style droplet menu. It grows out of the button with
   a small bounce, items appear one after another, drag the finger across the items to choose, tap outside or Back
   closes it by shrinking back into the button. Inside a `LiquidGlassScene` it is drawn as real glass above the tab bar;

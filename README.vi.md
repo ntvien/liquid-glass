@@ -136,7 +136,8 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
 Nên có công tắc **"Giảm hiệu ứng"** trong Cài đặt cho người thích ít trong suốt hoặc muốn tiết kiệm pin.
 
 **Kính nổi khúc xạ nội dung:** mặc định trên mọi máy Android 13+, thanh tab và menu khúc xạ cả nội dung đang cuộn phía dưới (chữ, ảnh bị bẻ cong ở mép), không chỉ nền. Đây là thứ làm kính trông như kính thật thay vì nhựa trắng.
-- **Cái giá:** khoảng 10 ms mỗi khung hình khi cuộn trên máy tầm trung.
+- **Cái giá:** tốn nhất trong toàn bộ kính. Trên Galaxy S23 Ultra, khung giật khi cuộn là 71% khi bật, 22% khi tắt (xem
+  [Performance rules](README.md#performance-rules)).
 - **Cách tắt:** nếu benchmark của app vượt ngưỡng, truyền `overlaySamplesContent = false`.
 
 ### 4. Một màn có kính
@@ -483,5 +484,8 @@ Tóm tắt:
   - chỉ dùng `RoundedCornerShape`;
   - nền vẽ một lần;
   - bóng chỉ cho thanh tab và nút chính;
-  - dưới 10% khung hình giật ở mức `Full` trên máy tầm trung, đo bằng bản release.
+  - thanh tab khúc xạ nội dung đang cuộn là phần tốn nhất: nếu vượt ngân sách, truyền `overlaySamplesContent = false`
+    trước;
+  - đo bằng bản release, so với chính màn đó khi `reduceEffects = true`: kính chỉ nên thêm khoảng 10 điểm % khung
+    giật. Số đo thật trên S23 Ultra, A52s, A51 nằm ở mục Performance rules.
 - **Giấy phép:** Apache 2.0. Engine kính chép từ Kyant0/AndroidLiquidGlass, các chỗ đã sửa ghi trong [NOTICE](NOTICE).

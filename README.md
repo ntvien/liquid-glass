@@ -136,7 +136,8 @@ Offer a "Reduce effects" switch in your settings for people who prefer less tran
 **Floating glass refracts the content.** By default, on every Android 13+ device the tab bar and menus refract the
 scrolling content under them (text and images bend at the edges), not only the background. This is what makes them look
 like glass instead of white plastic.
-- **Cost:** about 10 ms per frame while scrolling on mid-range devices.
+- **Cost:** the largest of the whole glass. Galaxy S23 Ultra, janky frames while scrolling: 71 % with it, 22 % without
+  (see [Performance rules](#performance-rules)).
 - **Turn it off:** pass `overlaySamplesContent = false` if your app's benchmark is over budget.
 
 ### 4. A screen with glass
@@ -503,19 +504,83 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 
 ## Performance rules
 
-Measured on a mid-range device (Redmi Note 13; catalog screen: 100 % janky frames → ~12 % with full glass, ~3 % with
-glass off):
+### Measured
+
+The `benchmark` module drives the sample's catalog screen: release build (R8) with the library's baseline profile,
+Macrobenchmark 1.5 `FrameTimingMetric`, 5 warm runs per case. **Janky** = a frame that missed its display deadline
+(`frameOverrunMs > 0`, Android 12+): 8.3 ms at 120 Hz, 16.7 ms at 60 Hz. Tables give the median of the 5 runs. Single
+runs vary a lot on Samsung phones (now and then a run has every frame late), so compare a row with the glass-off row of
+the same device rather than with an absolute target.
+
+Galaxy S23 Ultra (SM-S918B), Android 13, 120 Hz, `GlassQuality.Full`:
+
+| Glass | Scroll under the tab bar | Switch tabs, drag the droplet | Switch segments |
+|---|---|---|---|
+| Default: `Optimized` (Auto), tab bar refracts the content | 71 % | 64 % | 94 % |
+| `Rich` | 92 % | 65 % | 92 % |
+| `Optimized`, `overlaySamplesContent = false` | 22 % | 30 % | 32 % |
+| Glass off (`reduceEffects = true`), control | 34 % | 2 % | 7 % |
+
+Other devices, default settings:
+
+| Device | Glass | Scroll under the tab bar | Switch tabs, drag the droplet | Switch segments |
+|---|---|---|---|---|
+| Galaxy A52s (SM-A528B), Android 12, 120 Hz | `BlurOnly`, `Optimized` | 90 % | 95 % | 97 % |
+| Galaxy A52s, glass off (control) | `Off` | 85 % | 79 % | 27 % |
+| Galaxy A51 (SM-A515F), Android 10, 60 Hz | `Off` | 59 % \* | 56 % \* | 75 % \* |
+| Emulator, Android 16, software GPU | `Full` | 93 % | 99 % | 100 % |
+
+\* Android 10 reports no frame deadlines: share of frames whose CPU time is over 16.7 ms.
+
+What the numbers say:
+
+- **The tab bar refracting the scrolling content is the most expensive part.** It blurs and re-renders whatever moves
+  under it on every frame; without it the tab bar refracts only the background, recorded once. Turning it off on the
+  S23 Ultra: scroll 71 → 22 %, tabs 64 → 30 %, segments 94 → 32 %.
+- `Rich` costs about 20 more points while scrolling (71 → 92 %) and nothing measurable elsewhere.
+- `GlassLook.Auto` chose `Optimized` on all three Samsung phones, the S23 Ultra included: none of them declares a
+  Media Performance Class.
+- Glass is not the only cost of a screen: on 120 Hz Samsung phones most frames are 1–3 ms late even with glass off,
+  and the A51 is CPU-bound with the frosted fallback.
+- The emulator renders on the CPU: use it to check that the benchmarks run, never for numbers.
+
+Cold start, time to initial display (median of 10 starts):
+
+| Device | No compilation | With the baseline profile |
+|---|---|---|
+| Galaxy S23 Ultra | 428 ms, 445 ms (two runs) | 397 ms, 457 ms: no difference beyond noise |
+| Galaxy A52s | not measured \*\* | 500 ms |
+| Galaxy A51 | 826 ms | 608 ms (−26 %) |
+| Emulator | 2838 ms | 838 ms (−70 %) |
+
+\*\* Play Protect held the reinstall that a start without compilation needs.
+
+### Rules
 
 - At most **6 real glass elements per screen**, the tab bar included. Repeated items (list rows, chips) use
   `GlassDefaults.frost()`, which never samples the background.
-- Only `RoundedCornerShape`: path-based shapes cost ~9 ms per frame.
+- Only `RoundedCornerShape`: the lens, highlight and inner shadow are computed for rounded corners; other shapes are
+  clipped with a path on every frame.
 - Draw the `LiquidGlassScene` background **once** (for example into a quarter-resolution bitmap, see
-  `sample/SampleArt.kt`). Redrawing a full-screen gradient every frame costs ~7 ms. A smooth background also means the
-  glass needs no blur.
-- Shadows cost ~10 % janky frames: keep them on floating chrome and the primary button (the presets already do).
-- Real glass on a small button costs ~3 ms each: the `Optimized` look draws accent buttons solid.
-- Never judge smoothness on a debug build; measure a release (R8) build with Macrobenchmark and aim for under 10 %
-  janky frames with `GlassQuality.Full` on a mid-range device.
+  `sample/SampleArt.kt`). A smooth background also means the glass needs no blur.
+- Over budget? Pass `overlaySamplesContent = false` first: it is the biggest single saving (see above).
+- Shadows only on floating chrome and the primary button (the presets already do). The `Optimized` look draws accent
+  buttons solid instead of real glass.
+- Never judge smoothness on a debug build. Measure a release (R8) build with Macrobenchmark and compare with the same
+  screen and `reduceEffects = true`: glass should add no more than about 10 points of janky frames.
+
+### Measure it yourself
+
+```bash
+# Every case on one device (ANDROID_SERIAL also takes a comma-separated list of devices)
+ANDROID_SERIAL=<serial> ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest
+# Regenerate the baseline profile shipped in the AAR (Android 13+ device or emulator)
+ANDROID_SERIAL=<serial> ./gradlew :liquidglass:generateBaselineProfile
+```
+
+Results (JSON) land in `benchmark/build/outputs/connected_android_test_additional_output/benchmarkRelease/connected/`.
+Unlock the phone first: a secure lock screen hides the app. On a Magisk-rooted phone Macrobenchmark's `su` check can
+hang, and Play Protect can hold the reinstall that `startupWithoutCompilation` needs.
 
 ## Accessibility
 

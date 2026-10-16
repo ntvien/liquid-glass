@@ -18,3 +18,4 @@ rootProject.name = "liquid-glass"
 
 include(":liquidglass")
 include(":sample")
+include(":benchmark")
