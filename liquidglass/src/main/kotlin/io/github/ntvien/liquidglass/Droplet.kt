@@ -16,6 +16,8 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
@@ -201,17 +203,17 @@ internal fun Modifier.droplet(state: DropletState, shape: Shape, idleColor: Colo
     // skip them, so a resting or sliding droplet does not record the backdrop and three extra layers every frame.
     // 0.9 like the segmented control's shadow: its light pill (raisedFill) is 97 % opaque.
     val opaqueAtRest = idleColor.alpha >= 0.9f
+    // The lens is a new RenderEffect whenever its size changes: grow it in LENS_STEPS steps, not every frame. The
+    // effects block reads only this step (0 exactly when lift is 0), so the blur + lens chain is rebuilt ~8 times per
+    // press instead of on every frame of the press spring.
+    val lensStep = remember(state) { derivedStateOf { ceil(state.lift * LENS_STEPS) / LENS_STEPS } }
     return this.drawBackdrop(
         backdrop = backdrop,
         shape = { shape },
         effects = {
-            val p = state.lift
-            if (blurRadius > 0.dp && (p > 0f || !opaqueAtRest)) blur(blurRadius.toPx())
-            // The lens is a new RenderEffect whenever its size changes: grow it in LENS_STEPS steps, not every frame.
-            if (p > 0f) {
-                val q = ceil(p * LENS_STEPS) / LENS_STEPS
-                lens(10.dp.toPx() * q, 14.dp.toPx() * q, chromaticAberration = true)
-            }
+            val q = lensStep.value
+            if (blurRadius > 0.dp && (q > 0f || !opaqueAtRest)) blur(blurRadius.toPx())
+            if (q > 0f) lens(10.dp.toPx() * q, 14.dp.toPx() * q, chromaticAberration = true)
         },
         highlight = { state.lift.takeIf { it > 0f }?.let { Highlight.Default.copy(alpha = it) } },
         shadow = { state.lift.takeIf { it > 0f }?.let { Shadow(alpha = it) } },

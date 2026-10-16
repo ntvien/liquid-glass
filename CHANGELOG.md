@@ -11,6 +11,11 @@ while the version is 0.x the public API may still change between minor versions.
 - Droplet press animation: the lens grows in 8 steps instead of being rebuilt every frame, the inner shadow fades
   instead of growing (a new radius re-blurred it every frame), and the last invisible frames of the press spring no
   longer draw the glass.
+- Droplet press animation: the blur + lens chain is now really rebuilt only when the lens moves to its next step
+  (about 8 times per press). Before, the steps only rounded its size: the effects still re-ran, with a new
+  RenderEffect chain, on every frame the press spring moved.
+- Baseline profile regenerated: it no longer matched the droplet's code after the changes above, so the droplet's
+  per-frame code ran without ahead-of-time compilation.
 - Shadow, inner shadow and rim layers are not re-recorded when only their alpha changes (the droplet's press
   animation re-recorded the blurred shadow and the rim shader every frame), nor on every recomposition (each tap on
   a segment or tab re-recorded them on all glass it recomposed). The inner shadow is now cached like the others;
