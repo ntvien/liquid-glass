@@ -16,6 +16,11 @@ while the version is 0.x the public API may still change between minor versions.
   a segment or tab re-recorded them on all glass it recomposed). The inner shadow is now cached like the others;
   before, it was re-recorded on every draw.
 - Tab and segment labels cross-fade without an offscreen layer per label.
+- `LiquidTabBar` with `LiquidTabLabels.SelectedOnly`: while the droplet slides between tabs of different widths it is
+  no longer rebuilt (lens, blur, shadow, rim) on every frame. It is measured at a few fixed widths and squeezed the
+  rest of the way (at most 6 %, only while it moves); on a tab it has its exact width. Looks the same. Galaxy S23
+  Ultra, switching tabs: frames late by more than 4 ms 18 → 14 %, janky 90 → 82 %.
+- `benchmark`: tab switching with labels on the selected tab only, menu open/close, each with a glass-off control.
 
 ## 0.2.0 — 2026-10-16
 
