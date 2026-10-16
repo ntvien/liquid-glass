@@ -11,7 +11,7 @@ Tiếng Việt: [README.vi.md](README.vi.md)
 |---|---|---|
 | ![Stacked](docs/sample-stacked.png) | ![Selected only](docs/sample-selected-only.png) | ![Menu](docs/sample-menu.png) |
 
-*Sample app on the Android 16 emulator.*
+*Sample app on the Android 16 emulator, with `overlaySamplesContent = true`.*
 
 - [Install](#install)
 - [Quick start](#quick-start)
@@ -127,7 +127,7 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
     LiquidGlassTheme(
         look = GlassLook.Auto,          // Rich on high-end devices, Optimized elsewhere
         reduceEffects = reduceEffects,  // from your settings screen: true = frosted glass everywhere
-        overlaySamplesContent = null,   // null: tab bar and menus refract the scrolling content on Android 13+
+        overlaySamplesContent = null,   // null: content refraction only with Rich / high-end devices; true: everywhere
         content = content,
     )
 }
@@ -135,12 +135,13 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
 
 Offer a "Reduce effects" switch in your settings for people who prefer less transparency or want to save battery.
 
-**Floating glass refracts the content.** By default, on every Android 13+ device the tab bar and menus refract the
-scrolling content under them (text and images bend at the edges), not only the background. This is what makes them look
-like glass instead of white plastic.
+**Floating glass and the content behind it.** The tab bar and menus always refract the background. Refracting the
+scrolling content under them too (text and images bend at the edges) looks most like real glass, and costs the most.
 - **Cost:** the largest of the whole glass. Galaxy S23 Ultra, janky frames while scrolling: 71 % with it, 22 % without
   (see [Performance rules](#performance-rules)).
-- **Turn it off:** pass `overlaySamplesContent = false` if your app's benchmark is over budget.
+- **Default:** on with `GlassLook.Rich` and on high-end devices (Media Performance Class ≥ 13), off elsewhere.
+- **Turn it on everywhere:** pass `overlaySamplesContent = true`, after measuring your screens. `false` turns it off
+  everywhere.
 
 ### 4. A screen with glass
 
@@ -470,7 +471,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Problem | Cause and fix |
 |---|---|
 | Glass looks flat and frosted, no lens | No `LiquidGlassTheme` around it, the element is outside a `LiquidGlassScene`, the device runs Android 12 or lower, Battery Saver is on, or `reduceEffects = true` |
-| Tab bar looks like white plastic, no lens | Background too pale (use strong color blobs, 35–60 % alpha, see `sample/SampleArt.kt`), Android 12 (no lens), or `overlaySamplesContent = false` was passed |
+| Tab bar looks like white plastic, no lens | Background too pale (use strong color blobs, 35–60 % alpha, see `sample/SampleArt.kt`) or Android 12 (no lens). By default the bar refracts only the background; `overlaySamplesContent = true` also bends the content scrolling under it (measure first) |
 | Last list item hidden behind the tab bar | Add `LiquidTabBarDefaults.contentBottomPadding()` to the list's bottom padding |
 | Tab bar disappears when typing | Intended. Pass `hideWhenImeVisible = false` to keep it |
 | Scrolling stutters | Too much real glass on screen, background redrawn every frame, or a debug build. See [Performance rules](#performance-rules) |
@@ -503,7 +504,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | `GlassLook` | Default for | Difference |
 |---|---|---|
 | `Rich` | high-end devices (Media Performance Class ≥ 13) | shadows on every block, accent buttons are real glass, the tab bar refracts scrolling content (also blurred on Android 12) |
-| `Optimized` | every other device | shadows only on floating chrome and accent buttons, accent buttons are solid with a sheen; the tab bar still refracts scrolling content on Android 13+ |
+| `Optimized` | every other device | shadows only on floating chrome and accent buttons, accent buttons are solid with a sheen, the tab bar refracts only the background (`overlaySamplesContent = true` adds the content) |
 
 `GlassLook.Auto` (default) picks between them.
 
@@ -521,9 +522,9 @@ Galaxy S23 Ultra (SM-S918B), Android 13, 120 Hz, `GlassQuality.Full`:
 
 | Glass | Scroll under the tab bar | Switch tabs, drag the droplet | Switch segments |
 |---|---|---|---|
-| Default: `Optimized` (Auto), tab bar refracts the content | 71 % | 64 % | 94 % |
+| `Optimized` (Auto), `overlaySamplesContent = true` | 71 % | 64 % | 94 % |
 | `Rich` | 92 % | 65 % | 92 % |
-| `Optimized`, `overlaySamplesContent = false` | 22 % | 30 % | 32 % |
+| Default: `Optimized` (Auto), tab bar refracts only the background | 22 % | 30 % | 32 % |
 | Glass off (`reduceEffects = true`), control | 34 % | 2 % | 7 % |
 
 Other devices, default settings:
@@ -569,7 +570,8 @@ Cold start, time to initial display (median of 10 starts):
   droplet, hero cards.
 - Draw the `LiquidGlassScene` background **once** (for example into a quarter-resolution bitmap, see
   `sample/SampleArt.kt`). A smooth background also means the glass needs no blur.
-- Over budget? Pass `overlaySamplesContent = false` first: it is the biggest single saving (see above).
+- Content refraction under the tab bar is the biggest single cost (see above): it is off by default except with
+  `Rich` and on high-end devices. Turn it on with `overlaySamplesContent = true` only after measuring.
 - Shadows only on floating chrome and the primary button (the presets already do). The `Optimized` look draws accent
   buttons solid instead of real glass.
 - Never judge smoothness on a debug build. Measure a release (R8) build with Macrobenchmark and compare with the same

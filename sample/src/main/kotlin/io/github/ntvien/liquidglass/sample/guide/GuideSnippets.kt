@@ -125,7 +125,7 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
     LiquidGlassTheme(
         look = GlassLook.Auto,          // Rich on high-end devices, Optimized elsewhere
         reduceEffects = reduceEffects,  // from your settings screen: true = frosted glass everywhere
-        overlaySamplesContent = null,   // null: tab bar and menus refract the scrolling content on Android 13+
+        overlaySamplesContent = null,   // null: content refraction only with Rich / high-end devices; true: everywhere
         content = content,
     )
 }

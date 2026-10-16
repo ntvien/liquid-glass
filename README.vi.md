@@ -13,7 +13,7 @@ English: [README.md](README.md)
 |---|---|---|
 | ![Stacked](docs/sample-stacked.png) | ![Selected only](docs/sample-selected-only.png) | ![Menu](docs/sample-menu.png) |
 
-*App mẫu chạy trên emulator Android 16.*
+*App mẫu chạy trên emulator Android 16, với `overlaySamplesContent = true`.*
 
 ## Cài đặt
 
@@ -129,7 +129,7 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
     LiquidGlassTheme(
         look = GlassLook.Auto,          // máy cao cấp: Rich, máy khác: Optimized
         reduceEffects = reduceEffects,  // lấy từ màn Cài đặt: true = kính mờ ở mọi nơi
-        overlaySamplesContent = null,   // null: thanh tab, menu khúc xạ cả nội dung đang cuộn trên Android 13+
+        overlaySamplesContent = null,   // null: chỉ Rich / máy cao cấp khúc xạ nội dung; true: mọi máy
         content = content,
     )
 }
@@ -137,10 +137,11 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
 
 Nên có công tắc **"Giảm hiệu ứng"** trong Cài đặt cho người thích ít trong suốt hoặc muốn tiết kiệm pin.
 
-**Kính nổi khúc xạ nội dung:** mặc định trên mọi máy Android 13+, thanh tab và menu khúc xạ cả nội dung đang cuộn phía dưới (chữ, ảnh bị bẻ cong ở mép), không chỉ nền. Đây là thứ làm kính trông như kính thật thay vì nhựa trắng.
+**Kính nổi và nội dung phía sau:** thanh tab và menu luôn khúc xạ nền. Khúc xạ thêm cả nội dung đang cuộn phía dưới (chữ, ảnh bị bẻ cong ở mép) trông giống kính thật nhất, nhưng tốn nhất.
 - **Cái giá:** tốn nhất trong toàn bộ kính. Trên Galaxy S23 Ultra, khung giật khi cuộn là 71% khi bật, 22% khi tắt (xem
   [Performance rules](README.md#performance-rules)).
-- **Cách tắt:** nếu benchmark của app vượt ngưỡng, truyền `overlaySamplesContent = false`.
+- **Mặc định:** bật với `GlassLook.Rich` và trên máy cao cấp (Media Performance Class ≥ 13), tắt ở máy khác.
+- **Bật cho mọi máy:** truyền `overlaySamplesContent = true`, sau khi đã đo các màn của app. `false` thì tắt ở mọi máy.
 
 ### 4. Một màn có kính
 
@@ -467,7 +468,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Hiện tượng | Nguyên nhân và cách sửa |
 |---|---|
 | Kính phẳng, mờ, không có loe | Thiếu `LiquidGlassTheme`, khối kính nằm ngoài `LiquidGlassScene`, máy Android 12 trở xuống, đang bật Tiết kiệm pin, hoặc `reduceEffects = true` |
-| Thanh tab trông như nhựa trắng, không thấy loe | Nền quá nhạt (dùng đốm màu đậm 35–60%, xem `sample/SampleArt.kt`); máy Android 12 (không có loe); hoặc đã truyền `overlaySamplesContent = false` |
+| Thanh tab trông như nhựa trắng, không thấy loe | Nền quá nhạt (dùng đốm màu đậm 35–60%, xem `sample/SampleArt.kt`) hoặc máy Android 12 (không có loe). Mặc định thanh tab chỉ khúc xạ nền; `overlaySamplesContent = true` bẻ cong cả nội dung cuộn phía dưới (đo trước khi bật) |
 | Mục cuối danh sách bị thanh tab che | Thêm `LiquidTabBarDefaults.contentBottomPadding()` vào padding đáy của danh sách |
 | Thanh tab biến mất khi gõ phím | Đúng thiết kế. Truyền `hideWhenImeVisible = false` để giữ lại |
 | Cuộn bị giật | Quá nhiều kính thật trên màn, nền vẽ lại mỗi khung, hoặc đang chạy bản debug. Xem phần hiệu năng trong [README.md](README.md#performance-rules) |
@@ -488,8 +489,8 @@ Tóm tắt:
   - `RoundedCornerShape` cho phần tử lặp; góc liên tục chỉ cho vài khối lớn (thanh tab, thẻ lớn);
   - nền vẽ một lần;
   - bóng chỉ cho thanh tab và nút chính;
-  - thanh tab khúc xạ nội dung đang cuộn là phần tốn nhất: nếu vượt ngân sách, truyền `overlaySamplesContent = false`
-    trước;
+  - thanh tab khúc xạ nội dung đang cuộn là phần tốn nhất: mặc định chỉ bật với `Rich` và máy cao cấp; chỉ truyền
+    `overlaySamplesContent = true` sau khi đo;
   - đo bằng bản release, so với chính màn đó khi `reduceEffects = true`: kính chỉ nên thêm khoảng 10 điểm % khung
     giật. Số đo thật trên S23 Ultra, A52s, A51 nằm ở mục Performance rules.
 - **Giấy phép:** Apache 2.0. Engine kính chép từ Kyant0/AndroidLiquidGlass, các chỗ đã sửa ghi trong [NOTICE](NOTICE).

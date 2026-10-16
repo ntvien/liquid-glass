@@ -29,9 +29,10 @@ while the version is 0.x the public API may still change between minor versions.
 - Stacked tab bar: the selected tab uses the new `GlassColors.tabSelectedFill` / `tabSelectedContent`; in the dark theme
   the selected label in the accent color was hard to read.
 - Fix: on glass with continuous corners the bright rim was drawn as a capsule.
-- `LiquidGlassTheme(overlaySamplesContent)`: floating glass (tab bar, menus) now refracts the scrolling content on every
-  Android 13+ device by default, not only with `GlassLook.Rich`. Pass `false` to sample only the background
-  (~10 ms/frame cheaper while scrolling on mid-range devices).
+- `LiquidGlassTheme(overlaySamplesContent)`: choose whether floating glass (tab bar, menus) refracts the scrolling
+  content regardless of the look. The default is unchanged: only with `GlassLook.Rich` and on high-end devices. It is
+  the most expensive part of the glass (Galaxy S23 Ultra, janky frames while scrolling: 22 % → 71 %; see README,
+  "Performance rules"), so turn it on with `true` only after measuring.
 - Sample: stronger background blobs and colored rows so the refraction is visible; a menu in the title bar.
 
 ## 0.1.0 — 2026-10-15

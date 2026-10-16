@@ -163,7 +163,8 @@ public enum class GlassLook {
 
     /**
      * Tuned from measurements on mid-range devices: shadows only on floating chrome and accent buttons, accent buttons
-     * are solid with a sheen. The tab bar still refracts the scrolling content on Android 13+.
+     * are solid with a sheen. The tab bar refracts only the background (see `overlaySamplesContent` of
+     * [LiquidGlassTheme]).
      */
     Optimized,
 }
@@ -183,10 +184,10 @@ internal val LocalGlassLook = staticCompositionLocalOf { GlassLook.Optimized }
  * @param reduceEffects wire this to a "Reduce effects" switch in your settings: `true` turns glass into the frosted
  *   fallback ([GlassQuality.Off]).
  * @param overlaySamplesContent whether floating glass (tab bar, menus) refracts the scrolling content, not only the
- *   background. `null` (default): yes with [GlassQuality.Full], and with [GlassLook.Rich] on Android 12 too. It is the
- *   most expensive part of the glass (measured numbers in the README, "Performance rules"); pass `false` if your
- *   benchmark is over budget.
- *   Ignored (always off) with [GlassQuality.Off].
+ *   background. `null` (default): yes with [GlassLook.Rich] (also on Android 12, blurred) and on high-end devices
+ *   (Media Performance Class ≥ 13) with [GlassQuality.Full]; elsewhere only the background. It is the most expensive
+ *   part of the glass (measured numbers in the README, "Performance rules"): pass `true` to turn it on everywhere only
+ *   after measuring your screens, `false` to turn it off everywhere. Ignored (always off) with [GlassQuality.Off].
  */
 @Composable
 public fun LiquidGlassTheme(
@@ -202,12 +203,12 @@ public fun LiquidGlassTheme(
         if (look == GlassLook.Auto) (if (isHighEndDevice()) GlassLook.Rich else GlassLook.Optimized) else look
     }
     val rich = resolved == GlassLook.Rich
-    // Refracting the content is what makes floating glass look like glass over a calm background.
+    // Refracting the content is the most expensive part of the glass: by default only the rich look and high-end devices.
     val samplesContent = when {
         quality == GlassQuality.Off -> false
         overlaySamplesContent != null -> overlaySamplesContent
         rich -> true
-        else -> quality == GlassQuality.Full
+        else -> quality == GlassQuality.Full && isHighEndDevice()
     }
     val styles = remember(colors, rich) { GlassStyles.from(colors, rich) }
     CompositionLocalProvider(
