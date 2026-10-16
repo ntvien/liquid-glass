@@ -175,7 +175,7 @@ LiquidGlassScene(
 ```
 
 Background rules:
-- Draw it **once**. A bitmap or a photo is ideal. A gradient drawn every frame costs ~7 ms on mid-range devices;
+- Draw it **once**. A bitmap or a photo is ideal. A gradient redrawn every frame repaints the whole screen behind every glass element;
   `GradientBackground` in the sample draws its blobs once into a quarter-resolution bitmap.
 - Keep it smooth (gradients, blurred photos). Then the glass needs no blur and stays cheap.
 - Glass placed in the content refracts the background. Glass placed in `overlay` (the tab bar) also refracts the

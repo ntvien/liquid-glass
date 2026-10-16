@@ -175,7 +175,7 @@ LiquidGlassScene(
 ```
 
 Luật cho nền:
-- **Vẽ một lần.** Ảnh bitmap hay ảnh chụp là tốt nhất. Gradient vẽ lại mỗi khung tốn ~7 ms trên máy tầm trung;
+- **Vẽ một lần.** Ảnh bitmap hay ảnh chụp là tốt nhất. Gradient vẽ lại mỗi khung thì cả màn sau mọi khối kính phải vẽ lại;
   `GradientBackground` trong app mẫu vẽ các đốm màu một lần thành bitmap 1/4 độ phân giải.
 - **Giữ nền mịn** (gradient, ảnh đã làm mờ): khi đó kính không cần blur nên rẻ.
 - **Kính lấy mẫu từ đâu:** kính đặt trong nội dung khúc xạ nền. Kính đặt trong `overlay` (thanh tab) còn khúc xạ cả nội dung đang cuộn, nếu máy đủ mạnh.

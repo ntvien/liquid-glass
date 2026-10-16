@@ -183,8 +183,9 @@ internal val LocalGlassLook = staticCompositionLocalOf { GlassLook.Optimized }
  * @param reduceEffects wire this to a "Reduce effects" switch in your settings: `true` turns glass into the frosted
  *   fallback ([GlassQuality.Off]).
  * @param overlaySamplesContent whether floating glass (tab bar, menus) refracts the scrolling content, not only the
- *   background. `null` (default): yes with [GlassQuality.Full], and with [GlassLook.Rich] on Android 12 too. It costs
- *   about 10 ms per frame while scrolling on mid-range devices; pass `false` if your benchmark is over budget.
+ *   background. `null` (default): yes with [GlassQuality.Full], and with [GlassLook.Rich] on Android 12 too. It is the
+ *   most expensive part of the glass (measured numbers in the README, "Performance rules"); pass `false` if your
+ *   benchmark is over budget.
  *   Ignored (always off) with [GlassQuality.Off].
  */
 @Composable

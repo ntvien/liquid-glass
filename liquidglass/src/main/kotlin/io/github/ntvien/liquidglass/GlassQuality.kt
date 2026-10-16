@@ -45,7 +45,7 @@ internal fun rememberDeviceGlassQuality(reduceEffects: Boolean): GlassQuality {
 internal fun isHighEndDevice(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.MEDIA_PERFORMANCE_CLASS >= Build.VERSION_CODES.TIRAMISU
 
-/** Whether floating glass (tab bar, menus) samples the scrolling content as well as the background. ~10 ms/frame on mid-range devices. */
+/** Whether floating glass (tab bar, menus) samples the scrolling content as well as the background. The most expensive part of the glass. */
 internal val LocalGlassOverlaySamplesContent = staticCompositionLocalOf { false }
 
 /** Whether glass draws shadows. Off in Battery Saver. */

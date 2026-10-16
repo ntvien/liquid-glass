@@ -26,7 +26,7 @@ import kotlin.math.roundToInt
 
 /**
  * Background the glass refracts: a base color and soft color blobs, drawn ONCE into a quarter-resolution bitmap
- * (smooth gradients upscale invisibly). Redrawing a full-screen gradient every frame costs ~7 ms on mid-range devices.
+ * (smooth gradients upscale invisibly). Redrawing a full-screen gradient every frame would repaint it behind every glass element.
  */
 @Composable
 fun GradientBackground(dark: Boolean, modifier: Modifier = Modifier) {

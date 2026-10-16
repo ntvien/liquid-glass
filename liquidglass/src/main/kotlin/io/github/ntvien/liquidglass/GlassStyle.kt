@@ -129,7 +129,7 @@ internal class GlassStyles(
                 shadowRadius = if (rich) 16.dp else 0.dp, shadowColor = c.glassShadow,
                 contentColor = c.content,
             ),
-            // Real glass on a small button costs ~3 ms each: the optimized look draws a solid block with a sheen.
+            // Real glass on every small button adds up: the optimized look draws a solid block with a sheen.
             accent = GlassStyle(
                 kind = if (rich) GlassKind.Liquid else GlassKind.Frost,
                 blur = 2.dp, lensHeight = 12.dp, lensAmount = 24.dp,
