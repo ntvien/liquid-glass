@@ -7,13 +7,14 @@ public final class io/github/ntvien/liquidglass/ComposableSingletons$LiquidGlass
 public final class io/github/ntvien/liquidglass/GlassColors {
 	public static final field $stable I
 	public static final field Companion Lio/github/ntvien/liquidglass/GlassColors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun copy-sQnm1Ko (JJJJJJJJJJJJJJJ)Lio/github/ntvien/liquidglass/GlassColors;
-	public static synthetic fun copy-sQnm1Ko$default (Lio/github/ntvien/liquidglass/GlassColors;JJJJJJJJJJJJJJJILjava/lang/Object;)Lio/github/ntvien/liquidglass/GlassColors;
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun copy-58FyvDQ (JJJJJJJJJJJJJJJJJJ)Lio/github/ntvien/liquidglass/GlassColors;
+	public static synthetic fun copy-58FyvDQ$default (Lio/github/ntvien/liquidglass/GlassColors;JJJJJJJJJJJJJJJJJJILjava/lang/Object;)Lio/github/ntvien/liquidglass/GlassColors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAccent-0d7_KjU ()J
 	public final fun getAccentSoft-0d7_KjU ()J
 	public final fun getBadge-0d7_KjU ()J
+	public final fun getChromeFill-0d7_KjU ()J
 	public final fun getContent-0d7_KjU ()J
 	public final fun getContentMuted-0d7_KjU ()J
 	public final fun getGlassFill-0d7_KjU ()J
@@ -26,6 +27,8 @@ public final class io/github/ntvien/liquidglass/GlassColors {
 	public final fun getRaisedFill-0d7_KjU ()J
 	public final fun getSelectedContent-0d7_KjU ()J
 	public final fun getSelectedFill-0d7_KjU ()J
+	public final fun getTabSelectedContent-0d7_KjU ()J
+	public final fun getTabSelectedFill-0d7_KjU ()J
 	public fun hashCode ()I
 }
 
@@ -43,6 +46,8 @@ public final class io/github/ntvien/liquidglass/GlassDefaults {
 	public final fun control (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
 	public final fun frost (Landroidx/compose/runtime/Composer;I)Lio/github/ntvien/liquidglass/GlassStyle;
 	public final fun getCardShape ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getContinuousCardShape ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getContinuousPillShape ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getControlShape ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getPillShape ()Landroidx/compose/ui/graphics/Shape;
 }

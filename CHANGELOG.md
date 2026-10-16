@@ -21,6 +21,14 @@ while the version is 0.x the public API may still change between minor versions.
   a small bounce, items appear one after another, drag the finger across the items to choose, tap outside or Back
   closes it by shrinking back into the button. Inside a `LiquidGlassScene` it is drawn as real glass above the tab bar;
   outside a scene it opens in a popup with the frosted look.
+- Tab bar glass after iOS 26: thicker lens band (24/48 dp) with chromatic aberration, 1 dp bright rim, 8 dp blur over
+  the content behind it, new `GlassColors.chromeFill` tint (dark glass in the dark theme). Brighter rims on all glass
+  (`glassStroke`, `glassHighlight`), lighter shadow in the light theme.
+- `GlassDefaults.ContinuousCardShape` and `ContinuousPillShape`: iOS-style continuous corners. The tab bar, its droplets
+  and `LiquidSurface` with real glass use them by default; frost surfaces keep `CardShape`.
+- Stacked tab bar: the selected tab uses the new `GlassColors.tabSelectedFill` / `tabSelectedContent`; in the dark theme
+  the selected label in the accent color was hard to read.
+- Fix: on glass with continuous corners the bright rim was drawn as a capsule.
 - `LiquidGlassTheme(overlaySamplesContent)`: floating glass (tab bar, menus) now refracts the scrolling content on every
   Android 13+ device by default, not only with `GlassLook.Rich`. Pass `false` to sample only the background
   (~10 ms/frame cheaper while scrolling on mid-range devices).

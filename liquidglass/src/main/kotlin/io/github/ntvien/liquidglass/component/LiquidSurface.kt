@@ -18,6 +18,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.ntvien.liquidglass.GlassDefaults
+import io.github.ntvien.liquidglass.GlassKind
 import io.github.ntvien.liquidglass.GlassStyle
 import io.github.ntvien.liquidglass.liquidGlass
 import io.github.ntvien.liquidglass.rememberGlassInteraction
@@ -35,7 +36,8 @@ import io.github.ntvien.liquidglass.rememberGlassInteraction
  * ```
  *
  * @param style preset from [GlassDefaults] (default [GlassDefaults.card]).
- * @param shape a rounded-corner shape (default [GlassDefaults.CardShape]).
+ * @param shape default [GlassDefaults.ContinuousCardShape] for real glass and [GlassDefaults.CardShape] for frost (lists).
+ *   Use a [androidx.compose.foundation.shape.RoundedCornerShape] for repeated items: continuous corners are a path.
  * @param contentPadding padding inside the glass.
  * @param onClick makes the surface a button.
  * @param onClickLabel describes the click for accessibility services.
@@ -44,7 +46,7 @@ import io.github.ntvien.liquidglass.rememberGlassInteraction
 public fun LiquidSurface(
     modifier: Modifier = Modifier,
     style: GlassStyle = GlassDefaults.card(),
-    shape: Shape = GlassDefaults.CardShape,
+    shape: Shape = if (style.kind == GlassKind.Frost) GlassDefaults.CardShape else GlassDefaults.ContinuousCardShape,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     onClick: (() -> Unit)? = null,
     onClickLabel: String? = null,

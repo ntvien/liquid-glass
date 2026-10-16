@@ -20,3 +20,5 @@ Changes made to the original code:
   4. RuntimeShaderCache.kt: AGSL shaders are compiled once per key and shared by all glass elements.
   5. internal/Paint.kt: deprecated asFrameworkPaint() replaced by nativePaint.
   6. GlassInteraction.kt, Droplet.kt: spring parameters exposed, optional blur on the droplet, wrapped for reuse.
+  7. highlight/HighlightStyle.kt: corner radii of continuous shapes (RoundedRectangularShape) are read from the shape
+     instead of falling back to a capsule.

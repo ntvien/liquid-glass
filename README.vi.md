@@ -111,7 +111,9 @@ fun BrandTheme(dark: Boolean, content: @Composable () -> Unit) {
 | Màu | Dùng cho |
 |---|---|
 | `content`, `contentMuted` | chữ và icon trên kính, tab chưa chọn |
-| `accent`, `accentSoft`, `onAccent` | tab đang chọn (kiểu Stacked), nút màu nhấn |
+| `accent`, `accentSoft`, `onAccent` | nút màu nhấn, kính màu nhấn |
+| `tabSelectedFill`, `tabSelectedContent` | tab đang chọn của thanh tab Stacked: giọt, icon và chữ |
+| `chromeFill` | lớp phủ của kính nổi (thanh tab): kính tối ở giao diện tối |
 | `selectedFill`, `selectedContent` | viên đang chọn của thanh tab SelectedOnly |
 | `raisedFill` | viên kính sáng nổi trên rãnh: ô đang chọn của tab trong màn |
 | `badge` | chấm báo trên tab |
@@ -231,7 +233,9 @@ Dùng kiểu kính nào ở đâu:
 | `GlassDefaults.accent()` | nút chính | — |
 | `GlassDefaults.frost()` | dòng danh sách, chip, nền ô nhập | thanh tab |
 
-Hình: `GlassDefaults.CardShape` (bo 24 dp), `ControlShape` (bo 16 dp), `PillShape` (bo tròn hẳn).
+Hình: `GlassDefaults.CardShape` (bo 24 dp), `ControlShape` (bo 16 dp), `PillShape` (bo tròn hẳn), và góc liên tục kiểu
+iOS `ContinuousCardShape` (24 dp), `ContinuousPillShape`. Góc liên tục vẽ bằng path: chỉ dùng cho vài khối lớn (thanh
+tab và giọt của nó, thẻ lớn). `LiquidSurface` mặc định dùng `ContinuousCardShape` cho kính thật, `CardShape` cho frost.
 
 **Tự làm kiểu kính:** chép một kiểu có sẵn rồi đổi phần cần đổi:
 
@@ -332,7 +336,7 @@ LiquidTabBar(
 
 | Kiểu nhãn | Trông thế nào | Hợp với |
 |---|---|---|
-| `LiquidTabLabels.Stacked` (mặc định) | mọi tab: icon trên, chữ dưới; giọt màu nhấn nhạt sau tab đang chọn | 4–5 tab |
+| `LiquidTabLabels.Stacked` (mặc định) | mọi tab: icon trên, chữ dưới; giọt màu nhạt sau tab đang chọn | 4–5 tab |
 | `LiquidTabLabels.SelectedOnly` | tab đang chọn nở thành viên có icon + chữ, tab khác chỉ icon | 3–5 tab, icon rõ nghĩa, nhãn ngắn |
 
 **Dùng với Navigation Compose:**
@@ -454,7 +458,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Một `LiquidGlassTheme` cho cả app, một `LiquidGlassScene` mỗi màn | Lồng scene, hoặc đặt kính ngoài scene mà mong có khúc xạ |
 | Vẽ nền một lần (bitmap, ảnh chụp) | Animate gradient toàn màn mỗi khung |
 | ≤ 6 khối kính thật mỗi màn, phần tử lặp lại dùng frost | Kính thật cho từng dòng danh sách |
-| `RoundedCornerShape` (các hình trong `GlassDefaults`) | Hình vẽ bằng path cho kính |
+| `RoundedCornerShape` cho phần tử lặp; góc liên tục chỉ cho vài khối lớn | Góc liên tục hay hình path khác cho dòng danh sách, chip |
 | Chữ trên kính đạt tương phản 4.5:1 so với điểm sáng nhất của nền | Đặt đoạn chữ dài trên ảnh rối |
 | Đo trên bản release | Đánh giá độ mượt trên bản debug |
 
@@ -481,7 +485,7 @@ Tóm tắt:
   - `Off`: Android ≤ 11, máy ít RAM, Tiết kiệm pin, hoặc `reduceEffects`.
 - **Hiệu năng:**
   - tối đa 6 khối kính thật mỗi màn;
-  - chỉ dùng `RoundedCornerShape`;
+  - `RoundedCornerShape` cho phần tử lặp; góc liên tục chỉ cho vài khối lớn (thanh tab, thẻ lớn);
   - nền vẽ một lần;
   - bóng chỉ cho thanh tab và nút chính;
   - thanh tab khúc xạ nội dung đang cuộn là phần tốn nhất: nếu vượt ngân sách, truyền `overlaySamplesContent = false`

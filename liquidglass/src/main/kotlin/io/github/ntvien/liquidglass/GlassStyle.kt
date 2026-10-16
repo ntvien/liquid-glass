@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kyant.shapes.Capsule
+import com.kyant.shapes.RoundedRectangle
 
 /** Kind of glass. */
 public enum class GlassKind {
@@ -102,12 +104,15 @@ internal class GlassStyles(
         fun from(c: GlassColors, rich: Boolean): GlassStyles = GlassStyles(
             chrome = GlassStyle(
                 kind = GlassKind.Liquid,
-                blur = 4.dp, lensHeight = 18.dp, lensAmount = 36.dp,
+                // iOS 26 look: a thick lens band (24/48 dp) with chromatic aberration at the edge and a 1 dp bright rim.
+                // The 8 dp blur applies only when the glass samples the content: text behind it softens so the tab
+                // labels stay readable, while the edge still bends.
+                blur = 8.dp, lensHeight = 24.dp, lensAmount = 48.dp,
                 chromaticAberration = true, depthEffect = true,
-                // Lighter tint than cards so the refracted content shows through.
-                surface = c.glassFill.copy(alpha = c.glassFill.alpha * if (rich) 0.8f else 0.6f),
+                surface = c.chromeFill,
                 fallbackSurface = c.glassFillOpaque,
-                shadowRadius = 28.dp, shadowColor = c.glassShadow,
+                highlightWidth = 1.dp,
+                shadowRadius = 24.dp, shadowColor = c.glassShadow,
                 contentColor = c.content,
             ),
             card = GlassStyle(
@@ -183,12 +188,23 @@ public object GlassDefaults {
     @ReadOnlyComposable
     public fun frost(): GlassStyle = LocalGlassStyles.current.frost
 
-    /** 24 dp rounded corners for cards. Only [RoundedCornerShape]: path shapes cost ~9 ms/frame on mid-range devices. */
+    /** 24 dp rounded corners for cards in lists and repeated blocks. */
     public val CardShape: Shape = RoundedCornerShape(24.dp)
 
     /** 16 dp rounded corners for controls. */
     public val ControlShape: Shape = RoundedCornerShape(16.dp)
 
-    /** Fully rounded ends (tab bar, segmented control, pills, circles). */
+    /** Fully rounded ends (segmented control, pills, chips, circles). */
     public val PillShape: Shape = RoundedCornerShape(percent = 50)
+
+    /**
+     * iOS-style continuous corners (the curve eases into the straight edge), 24 dp: the default of
+     * [io.github.ntvien.liquidglass.component.LiquidSurface].
+     * Drawn with a path, so it costs more than [CardShape]: use it for a few large blocks per screen, never for list
+     * rows, chips or other repeated items.
+     */
+    public val ContinuousCardShape: Shape = RoundedRectangle(24.dp)
+
+    /** iOS-style continuous capsule: the tab bar and its droplet. Same cost rule as [ContinuousCardShape]. */
+    public val ContinuousPillShape: Shape = Capsule()
 }

@@ -39,6 +39,9 @@ import androidx.compose.ui.platform.LocalContext
  * @property glassHighlight sheen of the frosted fallback.
  * @property glassShadow soft shadow under floating glass.
  * @property raisedFill light glass raised above a track: the selected segment of [io.github.ntvien.liquidglass.component.LiquidSegmentedControl].
+ * @property chromeFill tint of floating glass (tab bar): light enough to show what it refracts, strong enough for labels.
+ * @property tabSelectedFill droplet behind the selected tab of the stacked tab bar.
+ * @property tabSelectedContent icon and label of the selected tab of the stacked tab bar.
  */
 @Immutable
 public class GlassColors(
@@ -57,6 +60,9 @@ public class GlassColors(
     public val glassHighlight: Color,
     public val glassShadow: Color,
     public val raisedFill: Color,
+    public val chromeFill: Color,
+    public val tabSelectedFill: Color,
+    public val tabSelectedContent: Color,
 ) {
     /** Returns a copy with the given colors replaced. */
     public fun copy(
@@ -75,14 +81,19 @@ public class GlassColors(
         glassHighlight: Color = this.glassHighlight,
         glassShadow: Color = this.glassShadow,
         raisedFill: Color = this.raisedFill,
+        chromeFill: Color = this.chromeFill,
+        tabSelectedFill: Color = this.tabSelectedFill,
+        tabSelectedContent: Color = this.tabSelectedContent,
     ): GlassColors = GlassColors(
         content, contentMuted, accent, accentSoft, onAccent, selectedFill, selectedContent, badge,
         glassFill, glassFillStrong, glassFillOpaque, glassStroke, glassHighlight, glassShadow, raisedFill,
+        chromeFill, tabSelectedFill, tabSelectedContent,
     )
 
     private fun values(): List<Color> = listOf(
         content, contentMuted, accent, accentSoft, onAccent, selectedFill, selectedContent, badge,
         glassFill, glassFillStrong, glassFillOpaque, glassStroke, glassHighlight, glassShadow, raisedFill,
+        chromeFill, tabSelectedFill, tabSelectedContent,
     )
 
     override fun equals(other: Any?): Boolean = other is GlassColors && values() == other.values()
@@ -103,10 +114,14 @@ public class GlassColors(
             glassFill = Color(0x4DFFFFFF),
             glassFillStrong = Color(0xBFFFFFFF),
             glassFillOpaque = Color(0xF2FFFFFF),
-            glassStroke = Color(0x80FFFFFF),
-            glassHighlight = Color(0xA6FFFFFF),
-            glassShadow = Color(0x331D1B24),
+            // Bright rim and edge light, as on iOS 26.
+            glassStroke = Color(0xA6FFFFFF),
+            glassHighlight = Color(0xF2FFFFFF),
+            glassShadow = Color(0x2E000000),
             raisedFill = Color(0xF7FFFFFF),
+            chromeFill = Color(0x33FFFFFF),
+            tabSelectedFill = Color(0x293B57D6),
+            tabSelectedContent = Color(0xFF3B57D6),
         )
 
         /** Neutral colors for dark backgrounds. */
@@ -122,10 +137,15 @@ public class GlassColors(
             glassFill = Color(0x1FFFFFFF),
             glassFillStrong = Color(0x52262533),
             glassFillOpaque = Color(0xF2232230),
-            glassStroke = Color(0x33FFFFFF),
-            glassHighlight = Color(0x59FFFFFF),
+            glassStroke = Color(0x47FFFFFF),
+            glassHighlight = Color(0x99FFFFFF),
             glassShadow = Color(0x66000000),
             raisedFill = Color(0x40FFFFFF),
+            // Dark glass, as on iOS: 35 % of the dark background keeps light labels readable over busy content.
+            chromeFill = Color(0x59121119),
+            // The accent is too dark on a dark background: the selected tab is a light droplet with light content.
+            tabSelectedFill = Color(0x40F2EFF8),
+            tabSelectedContent = Color(0xFFF2EFF8),
         )
     }
 }

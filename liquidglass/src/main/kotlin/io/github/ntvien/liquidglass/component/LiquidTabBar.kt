@@ -127,7 +127,7 @@ public enum class LiquidTabLabels {
  * @param labelStyle label style for [LiquidTabLabels.Stacked].
  * @param selectedLabelStyle label style inside the selected pill for [LiquidTabLabels.SelectedOnly].
  * @param action optional round button to the right of the bar, e.g. a [LiquidSurface] with
- *   [GlassDefaults.chrome], [GlassDefaults.PillShape] and size [LiquidTabBarDefaults.Height].
+ *   [GlassDefaults.chrome], [GlassDefaults.ContinuousPillShape] and size [LiquidTabBarDefaults.Height].
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -191,7 +191,7 @@ public fun LiquidTabBar(
                 LiquidSurface(
                     modifier = Modifier.matchParentSize(),
                     style = GlassDefaults.chrome(),
-                    shape = GlassDefaults.PillShape,
+                    shape = GlassDefaults.ContinuousPillShape,
                     contentPadding = PaddingValues(),
                 ) {}
                 when (labels) {
@@ -250,7 +250,7 @@ private fun BoxScope.StackedTabs(
                 .offset { IntOffset((droplet.value * slot[0]).roundToInt(), 0) }
                 .width(with(density) { slotPx.toDp() })
                 .height(ITEM_HEIGHT)
-                .droplet(droplet, GlassDefaults.PillShape, idleColor = LiquidGlassTheme.colors.accentSoft, blur = GlassDefaults.chrome().blur),
+                .droplet(droplet, GlassDefaults.ContinuousPillShape, idleColor = LiquidGlassTheme.colors.tabSelectedFill, blur = GlassDefaults.chrome().blur),
         )
         Row(Modifier.fillMaxWidth()) {
             tabs.forEachIndexed { index, tab ->
@@ -269,7 +269,7 @@ private fun BoxScope.StackedTabs(
                     contentAlignment = Alignment.Center,
                 ) {
                     StackedFace(tab, colors.contentMuted, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = 1f - highlight() })
-                    StackedFace(tab, colors.accent, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = highlight() })
+                    StackedFace(tab, colors.tabSelectedContent, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = highlight() })
                 }
             }
         }
@@ -309,7 +309,7 @@ private fun BoxScope.PillTabs(
             .padding(horizontal = 8.dp)
             .then(droplet.dragModifier(slotWidthPx = { slot[0] }, onSettle = choose)),
         content = {
-            Box(Modifier.droplet(droplet, GlassDefaults.PillShape, idleColor = LiquidGlassTheme.colors.selectedFill))
+            Box(Modifier.droplet(droplet, GlassDefaults.ContinuousPillShape, idleColor = LiquidGlassTheme.colors.selectedFill))
             tabs.forEachIndexed { index, tab ->
                 PillTab(
                     tab = tab,

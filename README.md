@@ -109,7 +109,9 @@ fun BrandTheme(dark: Boolean, content: @Composable () -> Unit) {
 | Color | Used for |
 |---|---|
 | `content`, `contentMuted` | text and icons on glass, unselected tabs |
-| `accent`, `accentSoft`, `onAccent` | selected stacked tab, accent button |
+| `accent`, `accentSoft`, `onAccent` | accent button, accent glass |
+| `tabSelectedFill`, `tabSelectedContent` | selected tab of the stacked tab bar: droplet, icon and label |
+| `chromeFill` | tint of floating glass (tab bar): dark glass in the dark theme |
 | `selectedFill`, `selectedContent` | selected pill of the selected-only tab bar |
 | `raisedFill` | light glass raised above a track: the selected segment of the segmented control |
 | `badge` | tab badge dot |
@@ -232,7 +234,10 @@ Which preset where:
 | `GlassDefaults.accent()` | the primary button | — |
 | `GlassDefaults.frost()` | list rows, chips, input backgrounds | the tab bar |
 
-Shapes: `GlassDefaults.CardShape` (24 dp), `ControlShape` (16 dp), `PillShape` (fully rounded).
+Shapes: `GlassDefaults.CardShape` (24 dp), `ControlShape` (16 dp), `PillShape` (fully rounded), and the iOS-style
+continuous corners `ContinuousCardShape` (24 dp) and `ContinuousPillShape`. Continuous corners are drawn with a path:
+keep them for a few large blocks (the tab bar and its droplet, hero cards). `LiquidSurface` uses `ContinuousCardShape`
+by default for real glass and `CardShape` for frost.
 
 **Your own recipe**: copy a preset and change only what you need:
 
@@ -333,7 +338,7 @@ LiquidTabBar(
 
 | Labels | Looks like | Good for |
 |---|---|---|
-| `LiquidTabLabels.Stacked` (default) | every tab: icon above label, soft accent droplet behind the selected one | 4–5 tabs |
+| `LiquidTabLabels.Stacked` (default) | every tab: icon above label, soft tinted droplet behind the selected one | 4–5 tabs |
 | `LiquidTabLabels.SelectedOnly` | selected tab grows into a pill with icon + label, others icon only | 3–5 tabs with clear icons and short labels |
 
 **With Navigation Compose:**
@@ -456,7 +461,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | One `LiquidGlassTheme` for the app, one `LiquidGlassScene` per screen | Nest scenes, or put glass outside a scene and expect refraction |
 | Draw the background once (bitmap, photo) | Animate a full-screen gradient every frame |
 | ≤ 6 real glass elements per screen, frost for repeated items | Real glass on every list row |
-| `RoundedCornerShape` (`GlassDefaults` shapes) | Path-based or custom shapes on glass |
+| `RoundedCornerShape` for repeated items; continuous corners only on a few large blocks | Continuous or other path shapes on list rows and chips |
 | Keep text on glass at 4.5:1 contrast against the brightest part of the background | Put long text on a busy photo |
 | Measure a release build | Judge smoothness on a debug build |
 
@@ -479,7 +484,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | `GlassColors.light()` / `dark()` / `copy(...)` | Colors of glass and components |
 | `LiquidGlassScene(background, overlay, content)` | Frame of a screen with glass. One per screen |
 | `Modifier.liquidGlass(style, shape, interaction)` | Draws glass behind any element |
-| `GlassDefaults.chrome() / card() / control() / accent() / frost()` | Presets, plus `CardShape`, `ControlShape`, `PillShape` |
+| `GlassDefaults.chrome() / card() / control() / accent() / frost()` | Presets, plus `CardShape`, `ControlShape`, `PillShape`, `ContinuousCardShape`, `ContinuousPillShape` |
 | `GlassStyle`, `GlassKind` | Make your own recipe (start from a preset and `copy`) |
 | `rememberGlassInteraction()` | Press effect: swell, tilt toward the finger, glint |
 | `LiquidSurface` | A glass block; with `onClick` it is a button |
@@ -559,8 +564,9 @@ Cold start, time to initial display (median of 10 starts):
 
 - At most **6 real glass elements per screen**, the tab bar included. Repeated items (list rows, chips) use
   `GlassDefaults.frost()`, which never samples the background.
-- Only `RoundedCornerShape`: the lens, highlight and inner shadow are computed for rounded corners; other shapes are
-  clipped with a path on every frame.
+- `RoundedCornerShape` for anything repeated or scrolling: other shapes are clipped with a path on every frame. The
+  continuous shapes (`ContinuousCardShape`, `ContinuousPillShape`) are for a few large blocks only: the tab bar and its
+  droplet, hero cards.
 - Draw the `LiquidGlassScene` background **once** (for example into a quarter-resolution bitmap, see
   `sample/SampleArt.kt`). A smooth background also means the glass needs no blur.
 - Over budget? Pass `overlaySamplesContent = false` first: it is the biggest single saving (see above).
