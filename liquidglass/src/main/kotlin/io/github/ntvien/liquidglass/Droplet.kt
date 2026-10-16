@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.ceil
 
 /**
  * Droplet state: position (0..n-1 in tabs), press "lift", stretch and velocity.
@@ -73,6 +74,12 @@ internal class DropletState(
     val value: Float get() = valueAnim.value
     val targetValue: Float get() = valueAnim.targetValue
     val pressProgress: Float get() = pressAnim.value
+
+    /**
+     * [pressProgress] cut to 0 below [LIFT_CUTOFF]: the spring's last ~12 frames towards 0 are invisible but would
+     * still draw the whole glass stack.
+     */
+    val lift: Float get() = pressAnim.value.let { if (it < LIFT_CUTOFF) 0f else it }
     val velocity: Float get() = velocityAnim.value
 
     /** Droplet stretch: swells on press, elongates along the motion and flattens across it. */
@@ -170,6 +177,7 @@ internal class DropletState(
 
     private companion object {
         const val VISIBILITY = 0.001f
+        const val LIFT_CUTOFF = 0.02f
     }
 }
 
@@ -189,21 +197,32 @@ internal fun Modifier.droplet(state: DropletState, shape: Shape, idleColor: Colo
     // When the droplet samples scrolling content (tab bar refracting content) it must be blurred like the glass
     // around it, otherwise sharp text behind it shows through over the tab label.
     val blurRadius = if (backdrop !== backdrops.background) blur else 0.dp
+    // At rest (lift 0) the rim and shadows have alpha 0, and a (nearly) opaque pill hides the backdrop under it:
+    // skip them, so a resting or sliding droplet does not record the backdrop and three extra layers every frame.
+    // 0.9 like the segmented control's shadow: its light pill (raisedFill) is 97 % opaque.
+    val opaqueAtRest = idleColor.alpha >= 0.9f
     return this.drawBackdrop(
         backdrop = backdrop,
         shape = { shape },
         effects = {
-            if (blurRadius > 0.dp) blur(blurRadius.toPx())
-            val p = state.pressProgress
-            if (p > 0.01f) lens(10.dp.toPx() * p, 14.dp.toPx() * p, chromaticAberration = true)
+            val p = state.lift
+            if (blurRadius > 0.dp && (p > 0f || !opaqueAtRest)) blur(blurRadius.toPx())
+            // The lens is a new RenderEffect whenever its size changes: grow it in LENS_STEPS steps, not every frame.
+            if (p > 0f) {
+                val q = ceil(p * LENS_STEPS) / LENS_STEPS
+                lens(10.dp.toPx() * q, 14.dp.toPx() * q, chromaticAberration = true)
+            }
         },
-        highlight = { Highlight.Default.copy(alpha = state.pressProgress) },
-        shadow = { Shadow(alpha = state.pressProgress) },
-        innerShadow = { InnerShadow(radius = 8.dp * state.pressProgress, alpha = state.pressProgress) },
+        highlight = { state.lift.takeIf { it > 0f }?.let { Highlight.Default.copy(alpha = it) } },
+        shadow = { state.lift.takeIf { it > 0f }?.let { Shadow(alpha = it) } },
+        // Fixed radius, only alpha animates: alpha is set on the recorded layer, a new radius re-records and re-blurs it.
+        innerShadow = { state.lift.takeIf { it > 0f }?.let { InnerShadow(radius = 8.dp, alpha = it) } },
         layerBlock = state.layerBlock,
+        onDrawBackdrop = { drawBackdrop -> if (state.lift > 0f || !opaqueAtRest) drawBackdrop() },
         onDrawSurface = {
-            val p = state.pressProgress
-            drawRect(idleColor, alpha = 1f - p)
+            drawRect(idleColor, alpha = 1f - state.lift)
         },
     )
 }
+
+private const val LENS_STEPS = 8f

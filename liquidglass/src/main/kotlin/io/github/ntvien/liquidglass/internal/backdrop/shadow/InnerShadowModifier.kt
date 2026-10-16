@@ -23,6 +23,7 @@ import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.node.requireGraphicsContext
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Density
+import io.github.ntvien.liquidglass.internal.backdrop.internal.RecordKey
 import io.github.ntvien.liquidglass.internal.backdrop.internal.ShapeProvider
 import io.github.ntvien.liquidglass.internal.backdrop.internal.clipOutline
 import io.github.ntvien.liquidglass.internal.backdrop.isRenderEffectSupported
@@ -79,6 +80,8 @@ internal class InnerShadowNode(
 
     private var prevRadius = Float.NaN
 
+    private var recordedKey: RecordKey? = null
+
     override fun ContentDrawScope.draw() {
         drawContent()
 
@@ -96,7 +99,8 @@ internal class InnerShadowNode(
             val offsetX = shadow.offset.x.toPx()
             val offsetY = shadow.offset.y.toPx()
 
-            val outline = shapeProvider.shape.createOutline(size, layoutDirection, density)
+            val shape = shapeProvider.shape
+            val outline = shape.createOutline(size, layoutDirection, density)
             val clipPath =
                 if (outline is Outline.Rounded) {
                     clipPath ?: Path().also { clipPath = it }
@@ -104,9 +108,15 @@ internal class InnerShadowNode(
                     null
                 }
 
+            // liquid-glass change: like ShadowModifier, record only when size, shape or parameters change (alpha is a
+            // layer property). The original re-recorded on every draw, e.g. every frame while the droplet is dragged.
+            val key = RecordKey(size, density.density, layoutDirection, shapeProvider.innerShape, if (shadow.alpha == 1f) shadow else shadow.copy(alpha = 1f))
+            shadowLayer.alpha = shadow.alpha
+            if (key != recordedKey) {
+            recordedKey = key
+
             configurePaint(shadow)
 
-            shadowLayer.alpha = shadow.alpha
             shadowLayer.blendMode = shadow.blendMode
             if (prevRadius != radius) {
                 shadowLayer.renderEffect =
@@ -126,6 +136,7 @@ internal class InnerShadowNode(
                 canvas.drawOutline(outline, ShadowMaskPaint)
                 canvas.translate(-offsetX, -offsetY)
                 canvas.restore()
+            }
             }
 
             val canvas = drawContext.canvas
@@ -149,6 +160,8 @@ internal class InnerShadowNode(
         shadowLayer?.let { layer ->
             graphicsContext.releaseGraphicsLayer(layer)
             shadowLayer = null
+            recordedKey = null
+            prevRadius = Float.NaN
         }
     }
 

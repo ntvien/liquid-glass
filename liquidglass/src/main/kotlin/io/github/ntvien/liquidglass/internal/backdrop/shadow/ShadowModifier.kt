@@ -94,14 +94,15 @@ internal class ShadowNode(
                 ceil(size.height + radius * 4f + offsetY).toInt()
             )
             val shape = shapeProvider.shape
-            val key = RecordKey(size, density.density, layoutDirection, shape, shadow)
+            // Alpha is a layer property, not part of the recording: an alpha animation must not re-record the blur.
+            val key = RecordKey(size, density.density, layoutDirection, shapeProvider.innerShape, if (shadow.alpha == 1f) shadow else shadow.copy(alpha = 1f))
+            shadowLayer.alpha = shadow.alpha
             if (key != recordedKey) {
             recordedKey = key
             val outline = shape.createOutline(size, layoutDirection, density)
 
             configurePaint(shadow)
 
-            shadowLayer.alpha = shadow.alpha
             shadowLayer.blendMode = shadow.blendMode
             shadowLayer.record(shadowSize) {
                 translate(radius * 2f + offsetX, radius * 2f + offsetY) {

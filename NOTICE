@@ -15,8 +15,9 @@ Changes made to the original code:
      (Android only), every declaration made internal.
   2. DrawBackdropModifier.kt: the backdrop is re-recorded only when the element's position in the window changes,
      not on every relayout.
-  3. ShadowModifier.kt, HighlightModifier.kt: shadow and highlight layers are recorded only when size, shape or
-     parameters change (internal/RecordKey.kt, new file).
+  3. ShadowModifier.kt, InnerShadowModifier.kt, HighlightModifier.kt: shadow, inner shadow and highlight layers are
+     recorded only when size, shape or parameters other than alpha change (internal/RecordKey.kt, new file); alpha
+     is set on the layer without re-recording.
   4. RuntimeShaderCache.kt: AGSL shaders are compiled once per key and shared by all glass elements.
   5. internal/Paint.kt: deprecated asFrameworkPaint() replaced by nativePaint.
   6. GlassInteraction.kt, Droplet.kt: spring parameters exposed, optional blur on the droplet, wrapped for reuse.

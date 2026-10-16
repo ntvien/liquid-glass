@@ -71,7 +71,8 @@ val apiCheck = tasks.register("apiCheck") {
     inputs.files(releaseClasses)
     inputs.file(apiFile)
     doLast {
-        if (apiFile.asFile.readText() != renderApi(releaseClasses)) {
+        // Line endings ignored: a Windows checkout with core.autocrlf has the committed dump in CRLF.
+        if (apiFile.asFile.readText().replace("\r\n", "\n") != renderApi(releaseClasses)) {
             throw GradleException("Public API changed. Review it, run ./gradlew :liquidglass:apiDump and commit api/liquidglass.api.")
         }
     }

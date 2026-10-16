@@ -112,7 +112,9 @@ internal class HighlightNode(
                 )
 
             val shape = shapeProvider.shape
-            val key = RecordKey(size, density.density, layoutDirection, shape, highlight)
+            // Alpha is a layer property, not part of the recording: an alpha animation must not re-record the rim.
+            val key = RecordKey(size, density.density, layoutDirection, shapeProvider.innerShape, if (highlight.alpha == 1f) highlight else highlight.copy(alpha = 1f))
+            highlightLayer.alpha = highlight.alpha
             if (key != recordedKey) {
             recordedKey = key
             val outline = shape.createOutline(size, layoutDirection, density)
@@ -125,7 +127,6 @@ internal class HighlightNode(
 
             configurePaint(highlight)
 
-            highlightLayer.alpha = highlight.alpha
             highlightLayer.blendMode = highlight.style.blendMode
             highlightLayer.record(safeSize) {
                 translate(1f, 1f) {

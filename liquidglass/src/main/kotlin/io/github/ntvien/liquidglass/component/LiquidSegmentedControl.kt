@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
@@ -156,14 +157,14 @@ public fun LiquidSegmentedControl(
                         style = textStyle.copy(color = textColor),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.graphicsLayer { alpha = 1f - highlight() }.clearAndSetSemantics {},
+                        modifier = Modifier.graphicsLayer { alpha = 1f - highlight(); compositingStrategy = CompositingStrategy.ModulateAlpha }.clearAndSetSemantics {},
                     )
                     BasicText(
                         label,
                         style = textStyle.copy(color = selectedTextColor, fontWeight = FontWeight.SemiBold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.graphicsLayer { alpha = highlight() }.clearAndSetSemantics {},
+                        modifier = Modifier.graphicsLayer { alpha = highlight(); compositingStrategy = CompositingStrategy.ModulateAlpha }.clearAndSetSemantics {},
                     )
                 }
             }

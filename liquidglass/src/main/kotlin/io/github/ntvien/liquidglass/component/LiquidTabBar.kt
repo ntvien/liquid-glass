@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -268,8 +269,8 @@ private fun BoxScope.StackedTabs(
                         },
                     contentAlignment = Alignment.Center,
                 ) {
-                    StackedFace(tab, colors.contentMuted, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = 1f - highlight() })
-                    StackedFace(tab, colors.tabSelectedContent, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = highlight() })
+                    StackedFace(tab, colors.contentMuted, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = 1f - highlight(); compositingStrategy = CompositingStrategy.ModulateAlpha })
+                    StackedFace(tab, colors.tabSelectedContent, colors.badge, showLabels, labelStyle, Modifier.graphicsLayer { alpha = highlight(); compositingStrategy = CompositingStrategy.ModulateAlpha })
                 }
             }
         }
@@ -393,8 +394,8 @@ private fun PillTab(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box {
-                GlassIcon(tab.icon, colors.contentMuted, Modifier.graphicsLayer { alpha = 1f - highlight() })
-                GlassIcon(tab.icon, colors.selectedContent, Modifier.graphicsLayer { alpha = highlight() })
+                GlassIcon(tab.icon, colors.contentMuted, Modifier.graphicsLayer { alpha = 1f - highlight(); compositingStrategy = CompositingStrategy.ModulateAlpha })
+                GlassIcon(tab.icon, colors.selectedContent, Modifier.graphicsLayer { alpha = highlight(); compositingStrategy = CompositingStrategy.ModulateAlpha })
                 if (tab.badge) Badge(colors.badge, Modifier.align(Alignment.TopEnd))
             }
             Spacer(Modifier.width(8.dp))
@@ -402,7 +403,7 @@ private fun PillTab(
                 text = tab.label,
                 style = selectedLabelStyle.copy(color = colors.selectedContent),
                 maxLines = 1,
-                modifier = Modifier.graphicsLayer { alpha = expansion() },
+                modifier = Modifier.graphicsLayer { alpha = expansion(); compositingStrategy = CompositingStrategy.ModulateAlpha },
             )
         }
     }
