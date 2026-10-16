@@ -137,8 +137,8 @@ Offer a "Reduce effects" switch in your settings for people who prefer less tran
 
 **Floating glass and the content behind it.** The tab bar and menus always refract the background. Refracting the
 scrolling content under them too (text and images bend at the edges) looks most like real glass, and costs the most.
-- **Cost:** the largest of the whole glass. Galaxy S23 Ultra, janky frames while scrolling: 71 % with it, 22 % without
-  (see [Performance rules](#performance-rules)).
+- **Cost:** the largest of the whole glass. Galaxy S23 Ultra, janky frames while scrolling: 97 % with it, 46 % without;
+  frames late by more than 4 ms: 16 % vs 3 % (see [Performance rules](#performance-rules)).
 - **Default:** on with `GlassLook.Rich` and on high-end devices (Media Performance Class ≥ 13), off elsewhere.
 - **Turn it on everywhere:** pass `overlaySamplesContent = true`, after measuring your screens. `false` turns it off
   everywhere.
@@ -514,20 +514,21 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 
 The `benchmark` module drives the sample's catalog screen: release build (R8) with the library's baseline profile,
 Macrobenchmark 1.5 `FrameTimingMetric`, 5 warm runs per case. **Janky** = a frame that missed its display deadline
-(`frameOverrunMs > 0`, Android 12+): 8.3 ms at 120 Hz, 16.7 ms at 60 Hz. Tables give the median of the 5 runs. Single
-runs vary a lot on Samsung phones (now and then a run has every frame late), so compare a row with the glass-off row of
-the same device rather than with an absolute target.
+(`frameOverrunMs > 0`, Android 12+): 8.3 ms at 120 Hz, 16.7 ms at 60 Hz. Tables give the median of the 5 runs; in
+parentheses, frames late by more than 4 ms, which varies less between runs. Single runs vary a lot on Samsung phones
+(now and then a run has every frame late), so compare a row with the glass-off row of the same table rather than with
+an absolute target.
 
 Galaxy S23 Ultra (SM-S918B), Android 13, 120 Hz, `GlassQuality.Full`:
 
 | Glass | Scroll under the tab bar | Switch tabs, drag the droplet | Switch segments |
 |---|---|---|---|
-| `Optimized` (Auto), `overlaySamplesContent = true` | 71 % | 64 % | 94 % |
-| `Rich` | 92 % | 65 % | 92 % |
-| Default: `Optimized` (Auto), tab bar refracts only the background | 22 % | 30 % | 32 % |
-| Glass off (`reduceEffects = true`), control | 34 % | 2 % | 7 % |
+| `Optimized` (Auto), `overlaySamplesContent = true` | 97 % (16 %) | 86 % (6 %) | 98 % (8 %) |
+| `Rich` | 97 % (24 %) | 83 % (3 %) | 96 % (10 %) |
+| Default: `Optimized` (Auto), tab bar refracts only the background | 46 % (3 %) | 59 % (3 %) | 76 % (12 %) |
+| Glass off (`reduceEffects = true`), control | 49 % (10 %) | 39 % (1 %) | 6 % (1 %) |
 
-Other devices, default settings:
+Other devices, default settings, measured before the current tab bar glass (blur 8 dp, continuous corners):
 
 | Device | Glass | Scroll under the tab bar | Switch tabs, drag the droplet | Switch segments |
 |---|---|---|---|---|
@@ -541,9 +542,12 @@ Other devices, default settings:
 What the numbers say:
 
 - **The tab bar refracting the scrolling content is the most expensive part.** It blurs and re-renders whatever moves
-  under it on every frame; without it the tab bar refracts only the background, recorded once. Turning it off on the
-  S23 Ultra: scroll 71 → 22 %, tabs 64 → 30 %, segments 94 → 32 %.
-- `Rich` costs about 20 more points while scrolling (71 → 92 %) and nothing measurable elsewhere.
+  under it on every frame; without it the tab bar refracts only the background, recorded once. Turning it on on the
+  S23 Ultra: scroll 46 → 97 % (late by more than 4 ms: 3 → 16 %), tabs 59 → 86 %, segments 76 → 98 %.
+- `Rich` adds frames late by more than 4 ms while scrolling (16 → 24 %); the janky share is the same.
+- The glass-off control moved between two measuring sessions on the same S23 (before the current tab bar glass: scroll
+  34 %, tabs 2 %, segments 7 %). Part may be the continuous corners, which the frosted fallback draws too, part is the
+  phone: compare rows within one table.
 - `GlassLook.Auto` chose `Optimized` on all three Samsung phones, the S23 Ultra included: none of them declares a
   Media Performance Class.
 - Glass is not the only cost of a screen: on 120 Hz Samsung phones most frames are 1–3 ms late even with glass off,

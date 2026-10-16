@@ -138,8 +138,8 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
 Nên có công tắc **"Giảm hiệu ứng"** trong Cài đặt cho người thích ít trong suốt hoặc muốn tiết kiệm pin.
 
 **Kính nổi và nội dung phía sau:** thanh tab và menu luôn khúc xạ nền. Khúc xạ thêm cả nội dung đang cuộn phía dưới (chữ, ảnh bị bẻ cong ở mép) trông giống kính thật nhất, nhưng tốn nhất.
-- **Cái giá:** tốn nhất trong toàn bộ kính. Trên Galaxy S23 Ultra, khung giật khi cuộn là 71% khi bật, 22% khi tắt (xem
-  [Performance rules](README.md#performance-rules)).
+- **Cái giá:** tốn nhất trong toàn bộ kính. Trên Galaxy S23 Ultra, khung giật khi cuộn là 97% khi bật, 46% khi tắt;
+  khung trễ quá 4 ms là 16% so với 3% (xem [Performance rules](README.md#performance-rules)).
 - **Mặc định:** bật với `GlassLook.Rich` và trên máy cao cấp (Media Performance Class ≥ 13), tắt ở máy khác.
 - **Bật cho mọi máy:** truyền `overlaySamplesContent = true`, sau khi đã đo các màn của app. `false` thì tắt ở mọi máy.
 
