@@ -36,7 +36,7 @@ Then the dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.github.ntvien:liquid-glass:v0.2.0")
+    implementation("com.github.ntvien:liquid-glass:v0.3.0")
 }
 ```
 
@@ -518,6 +518,11 @@ Macrobenchmark 1.5 `FrameTimingMetric`, 5 warm runs per case. **Janky** = a fram
 parentheses, frames late by more than 4 ms, which varies less between runs. Single runs vary a lot on Samsung phones
 (now and then a run has every frame late), so compare a row with the glass-off row of the same table rather than with
 an absolute target.
+
+The tables below were measured with 0.2.0. 0.3.0 makes the droplet indicator much cheaper; on the S23 Ultra, default
+settings, 0.2.0 and 0.3.0 measured back to back: switch segments 40 → 11 % janky (late by more than 4 ms: 6 → 2 %),
+switch tabs 55 → 34 % (2 → 0 %). Repeated in later sessions, 0.3.0 gave 22–25 % and 40 %: compare within one
+session. Details in [CHANGELOG.md](CHANGELOG.md).
 
 Galaxy S23 Ultra (SM-S918B), Android 13, 120 Hz, `GlassQuality.Full`:
 

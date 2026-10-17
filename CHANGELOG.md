@@ -3,7 +3,12 @@
 All notable changes to this project are documented here. The project follows [Semantic Versioning](https://semver.org/);
 while the version is 0.x the public API may still change between minor versions.
 
-## Unreleased
+## 0.3.0 — 2026-10-17
+
+Performance only: the public API and the look are unchanged. Galaxy S23 Ultra, default settings, 0.2.0 and 0.3.0
+measured back to back (janky frames, in parentheses late by more than 4 ms): switch segments 40 % (6 %) → 11 % (2 %),
+switch tabs and drag the droplet 55 % (2 %) → 34 % (0 %). Galaxy A51 (no real glass), CPU frame time P50: segments
+19.5 → 17.1 ms, tabs 20.2 → 18.1 ms.
 
 - Droplet indicator (`LiquidTabBar`, `LiquidSegmentedControl`): at rest it no longer draws the glass hidden under an
   opaque pill (backdrop, blur, rim, shadow and inner shadow), so a resting or sliding droplet costs about as much as a
