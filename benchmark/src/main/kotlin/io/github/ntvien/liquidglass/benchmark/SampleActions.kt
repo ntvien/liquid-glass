@@ -80,3 +80,21 @@ internal fun MacrobenchmarkScope.switchSegments() {
         device.waitForIdle()
     }
 }
+
+/** Switches the tab bar to labels on the selected tab only (the droplet changes width with every tab). */
+internal fun MacrobenchmarkScope.selectedOnlyLabels() {
+    findLabeled("Selected only").click()
+    device.waitForIdle()
+}
+
+/** Opens the title bar menu and closes it with Back, three times. */
+internal fun MacrobenchmarkScope.openAndCloseMenu() {
+    repeat(3) {
+        find(By.desc("More")).click()
+        find(By.text("Rename"))
+        device.waitForIdle()
+        device.pressBack()
+        device.wait(Until.gone(By.text("Rename")), TIMEOUT_MS)
+        device.waitForIdle()
+    }
+}

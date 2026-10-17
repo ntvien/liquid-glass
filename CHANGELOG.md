@@ -14,13 +14,22 @@ while the version is 0.x the public API may still change between minor versions.
 - Droplet press animation: the blur + lens chain is now really rebuilt only when the lens moves to its next step
   (about 8 times per press). Before, the steps only rounded its size: the effects still re-ran, with a new
   RenderEffect chain, on every frame the press spring moved.
-- Baseline profile regenerated: it no longer matched the droplet's code after the changes above, so the droplet's
-  per-frame code ran without ahead-of-time compilation.
 - Shadow, inner shadow and rim layers are not re-recorded when only their alpha changes (the droplet's press
   animation re-recorded the blurred shadow and the rim shader every frame), nor on every recomposition (each tap on
   a segment or tab re-recorded them on all glass it recomposed). The inner shadow is now cached like the others;
   before, it was re-recorded on every draw.
 - Tab and segment labels cross-fade without an offscreen layer per label.
+- `LiquidTabBar` with `LiquidTabLabels.SelectedOnly`: while the droplet slides between tabs of different widths it is
+  no longer rebuilt (lens, blur, shadow, rim) on every frame. It is measured at a few fixed widths and squeezed the
+  rest of the way (at most 6 %, only while it moves); on a tab it has its exact width. Looks the same. Galaxy S23
+  Ultra, switching tabs: frames late by more than 4 ms 18 → 14 %, janky 90 → 82 %.
+- Glass with a lens applies its vibrancy (saturation) inside the lens shader instead of a separate color filter pass
+  before it. Looks the same (with `overlaySamplesContent` the saturation now follows the blur: at most a few levels
+  of difference along strong color edges). Galaxy S23 Ultra, scrolling: CPU frame time P90 8.5 → 8.2 ms; with the
+  `Rich` look janky 91 → 87 %.
+- `benchmark`: tab switching with labels on the selected tab only, menu open/close, each with a glass-off control.
+- Baseline profile regenerated: it no longer matched the library's code after the droplet changes above, so the
+  droplet's per-frame code ran without ahead-of-time compilation.
 
 ## 0.2.0 — 2026-10-16
 

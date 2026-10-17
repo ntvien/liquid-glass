@@ -32,6 +32,12 @@ class GlassBenchmark {
     @Test
     fun switchSegments() = measure { switchSegments() }
 
+    @Test
+    fun switchTabsSelectedOnly() = measure { selectedOnlyLabels(); switchTabs() }
+
+    @Test
+    fun openMenu() = measure { openAndCloseMenu() }
+
     // Android 13+ only (GlassQuality.Full): separate the cost of the Rich look from the cost of the tab bar
     // refracting the scrolling content. Auto resolves to Rich only when the device declares Media Performance
     // Class 13+, so both looks are forced here to compare them on any device.
@@ -74,6 +80,12 @@ class GlassBenchmark {
 
     @Test
     fun switchSegmentsGlassOff() = glassDrawn { measure(glassOff = true) { switchSegments() } }
+
+    @Test
+    fun switchTabsSelectedOnlyGlassOff() = glassDrawn { measure(glassOff = true) { selectedOnlyLabels(); switchTabs() } }
+
+    @Test
+    fun openMenuGlassOff() = glassDrawn { measure(glassOff = true) { openAndCloseMenu() } }
 
     private fun glassDrawn(block: () -> Unit) {
         assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)

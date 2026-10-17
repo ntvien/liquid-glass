@@ -32,6 +32,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -68,7 +70,10 @@ import io.github.ntvien.liquidglass.GlassDefaults
 import io.github.ntvien.liquidglass.LiquidGlassTheme
 import io.github.ntvien.liquidglass.droplet
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.ln
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 /**
@@ -303,6 +308,8 @@ private fun BoxScope.PillTabs(
     val highlight: (Int) -> Float = { i -> (1f - abs(droplet.value - i)).coerceIn(0f, 1f) }
     val expansion: (Int) -> Float = { i -> if (showLabels) highlight(i) else 0f }
     val slot = remember { FloatArray(1) }
+    // Read in layout: relayout only when the glass appears or disappears, not on every frame of the press spring.
+    val lifted by remember(droplet) { derivedStateOf { droplet.lift > 0f } }
 
     Layout(
         modifier = Modifier
@@ -355,15 +362,30 @@ private fun BoxScope.PillTabs(
         val f = v - i0
         val dropX = xs[i0] + (xs[i1] - xs[i0]) * f
         val dropW = (widths[i0] + (widths[i1] - widths[i0]) * f).roundToInt().coerceAtLeast(1)
-        val dropletP = measurables[0].measure(Constraints.fixed(dropW, itemH))
+        // A new droplet size rebuilds its glass (lens, blur, shadow, rim). While the glass moves between tabs, measure
+        // it at the next width of a ladder and squeeze the rest with scaleX: a few rebuilds per tab change instead of
+        // one every frame. On a tab, and at rest (an opaque pill, no glass), it gets its exact width.
+        val measuredW = if (lifted && f > 0f) ladderWidth(dropW, collapsed) else dropW
+        val squeeze = dropW.toFloat() / measuredW
+        val dropletP = measurables[0].measure(Constraints.fixed(measuredW, itemH))
         val tabPs = tabMs.mapIndexed { i, m -> m.measure(Constraints.fixed(widths[i], itemH)) }
 
         layout(avail, constraints.maxHeight) {
             val y = (constraints.maxHeight - itemH) / 2
-            dropletP.place(dropX.roundToInt(), y)
+            dropletP.placeWithLayer(dropX.roundToInt(), y) {
+                scaleX = squeeze
+                transformOrigin = TransformOrigin(0f, 0.5f)
+            }
             tabPs.forEachIndexed { i, p -> p.place(xs[i].roundToInt(), y) }
         }
     }
+}
+
+/** Smallest width of the ladder [min] × [DROPLET_WIDTH_STEP]^k that is at least [width]. */
+private fun ladderWidth(width: Int, min: Int): Int {
+    if (width <= min || min <= 0) return width
+    val k = ceil(ln(width.toFloat() / min) / ln(DROPLET_WIDTH_STEP))
+    return ceil(min * DROPLET_WIDTH_STEP.pow(k)).toInt().coerceAtLeast(width)
 }
 
 @Composable
@@ -424,3 +446,6 @@ private const val LARGE_TEXT_SCALE = 1.3f
 
 /** Droplet swell on press (Kyant's icon tab uses ≈ 1.39; tabs with labels are wider, so less). */
 private const val PRESS_SCALE = 1.12f
+
+/** Width ratio between sizes the lifted SelectedOnly droplet is measured at: it is squeezed by at most 6 %. */
+private const val DROPLET_WIDTH_STEP = 1.06f
