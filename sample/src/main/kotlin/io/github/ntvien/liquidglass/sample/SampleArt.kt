@@ -1,83 +1,13 @@
 package io.github.ntvien.liquidglass.sample
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathBuilder
 import androidx.compose.ui.graphics.vector.path
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
-
-/**
- * Background the glass refracts: a base color and soft color blobs, drawn ONCE into a quarter-resolution bitmap
- * (smooth gradients upscale invisibly). Redrawing a full-screen gradient every frame would repaint it behind every glass element.
- */
-@Composable
-fun GradientBackground(dark: Boolean, modifier: Modifier = Modifier) {
-    val base = if (dark) Color(0xFF121119) else Color(0xFFF4F1EB)
-    // Strong enough blobs (35–60 %) that the lens has something to bend; a pale background makes glass look like plastic.
-    val blobs = if (dark) {
-        listOf(
-            Blob(Color(0x738EA2FF), 0.08f, 0.1f, 0.85f),
-            Blob(Color(0x66FFC24D), 0.95f, 0.32f, 0.7f),
-            Blob(Color(0x59FF7A6B), 0.2f, 0.62f, 0.75f),
-            Blob(Color(0x4D40C29B), 0.85f, 0.92f, 0.8f),
-        )
-    } else {
-        listOf(
-            Blob(Color(0x8C3B57D6), 0.08f, 0.1f, 0.85f),
-            Blob(Color(0x99FFC24D), 0.95f, 0.32f, 0.7f),
-            Blob(Color(0x73FF7A6B), 0.2f, 0.62f, 0.75f),
-            Blob(Color(0x5940C29B), 0.85f, 0.92f, 0.8f),
-        )
-    }
-    Spacer(
-        modifier
-            .fillMaxSize()
-            .drawWithCache {
-                val w = (size.width / DOWNSCALE).roundToInt().coerceAtLeast(1)
-                val h = (size.height / DOWNSCALE).roundToInt().coerceAtLeast(1)
-                val bitmap = ImageBitmap(w, h)
-                CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(w.toFloat(), h.toFloat())) {
-                    drawRect(base)
-                    blobs.forEach { b ->
-                        val center = Offset(b.x * w, b.y * h)
-                        val radius = b.radius * w
-                        val brush = Brush.radialGradient(
-                            0f to b.color,
-                            0.55f to b.color.copy(alpha = b.color.alpha * 0.6f),
-                            1f to b.color.copy(alpha = 0f),
-                            center = center,
-                            radius = radius,
-                        )
-                        drawCircle(brush, radius, center)
-                    }
-                }
-                val dst = IntSize(size.width.roundToInt(), size.height.roundToInt())
-                onDrawBehind { drawImage(bitmap, IntOffset.Zero, IntSize(w, h), dstSize = dst, filterQuality = FilterQuality.Low) }
-            },
-    )
-}
-
-private class Blob(val color: Color, val x: Float, val y: Float, val radius: Float)
-
-private const val DOWNSCALE = 4f
 
 /** Minimal 24 dp outline icons so the sample does not depend on Material icons. */
 object SampleIcons {

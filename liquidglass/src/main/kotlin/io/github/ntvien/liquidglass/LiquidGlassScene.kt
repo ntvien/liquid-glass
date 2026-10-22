@@ -54,14 +54,15 @@ internal val LocalGlassSceneTop = staticCompositionLocalOf<GlassSceneTop?> { nul
  *
  * ```
  * LiquidGlassScene(
- *     background = { MyBackground() },   // draw it once (e.g. into a bitmap): glass samples it every frame
+ *     background = { LiquidGradientBackground() }, // or your own: draw it once (e.g. into a bitmap)
  *     overlay = { LiquidTabBar(..., Modifier.align(Alignment.BottomCenter)) },
  * ) {
  *     LazyColumn { item { LiquidSurface { ... } } }
  * }
  * ```
  *
- * @param background what the glass refracts. Keep it a smooth gradient: then the glass needs no blur.
+ * @param background what the glass refracts, e.g. [io.github.ntvien.liquidglass.component.LiquidGradientBackground].
+ *   Keep it smooth (a gradient, a blurred photo): then the glass needs no blur.
  * @param overlay floating glass (tab bar, header). On capable devices it also refracts the scrolling [content].
  * @param content the screen content. Glass inside it samples only [background].
  */

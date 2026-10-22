@@ -151,7 +151,7 @@ Mỗi màn có đúng **một** `LiquidGlassScene`. `background` là thứ kính
 @Composable
 fun BasicScreen() {
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) }, // xem sample/SampleArt.kt
+        background = { LiquidGradientBackground() },
     ) {
         Column(
             Modifier.fillMaxSize().statusBarsPadding().padding(16.dp),
@@ -177,7 +177,8 @@ LiquidGlassScene(
 
 Luật cho nền:
 - **Vẽ một lần.** Ảnh bitmap hay ảnh chụp là tốt nhất. Gradient vẽ lại mỗi khung thì cả màn sau mọi khối kính phải vẽ lại;
-  `GradientBackground` trong app mẫu vẽ các đốm màu một lần thành bitmap 1/4 độ phân giải.
+  `LiquidGradientBackground` vẽ các đốm màu một lần thành bitmap 1/4 độ phân giải. Truyền `baseColor` và tối đa 4
+  `blobColors` để dùng màu thương hiệu.
 - **Giữ nền mịn** (gradient, ảnh đã làm mờ): khi đó kính không cần blur nên rẻ.
 - **Kính lấy mẫu từ đâu:** kính đặt trong nội dung khúc xạ nền. Kính đặt trong `overlay` (thanh tab) còn khúc xạ cả nội dung đang cuộn, nếu máy đủ mạnh.
 
@@ -278,7 +279,7 @@ fun TabBarScreen() {
     val homeList = rememberLazyListState()
     val scope = rememberCoroutineScope()
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) },
+        background = { LiquidGradientBackground() },
         overlay = {
             LiquidTabBar(
                 tabs = listOf(
@@ -346,7 +347,7 @@ LiquidTabBar(
 val nav = rememberNavController()
 val route = nav.currentBackStackEntryAsState().value?.destination?.route ?: "home"
 LiquidGlassScene(
-    background = { GradientBackground(dark = false) },
+    background = { LiquidGradientBackground() },
     overlay = {
         LiquidTabBar(
             tabs = listOf(LiquidTab("home", "Home", homeIcon), LiquidTab("me", "Me", personIcon)),
@@ -468,7 +469,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Hiện tượng | Nguyên nhân và cách sửa |
 |---|---|
 | Kính phẳng, mờ, không có loe | Thiếu `LiquidGlassTheme`, khối kính nằm ngoài `LiquidGlassScene`, máy Android 12 trở xuống, đang bật Tiết kiệm pin, hoặc `reduceEffects = true` |
-| Thanh tab trông như nhựa trắng, không thấy loe | Nền quá nhạt (dùng đốm màu đậm 35–60%, xem `sample/SampleArt.kt`) hoặc máy Android 12 (không có loe). Mặc định thanh tab chỉ khúc xạ nền; `overlaySamplesContent = true` bẻ cong cả nội dung cuộn phía dưới (đo trước khi bật) |
+| Thanh tab trông như nhựa trắng, không thấy loe | Nền quá nhạt (dùng đốm màu đậm 35–60%, như `LiquidGradientBackground`) hoặc máy Android 12 (không có loe). Mặc định thanh tab chỉ khúc xạ nền; `overlaySamplesContent = true` bẻ cong cả nội dung cuộn phía dưới (đo trước khi bật) |
 | Mục cuối danh sách bị thanh tab che | Thêm `LiquidTabBarDefaults.contentBottomPadding()` vào padding đáy của danh sách |
 | Thanh tab biến mất khi gõ phím | Đúng thiết kế. Truyền `hideWhenImeVisible = false` để giữ lại |
 | Cuộn bị giật | Quá nhiều kính thật trên màn, nền vẽ lại mỗi khung, hoặc đang chạy bản debug. Xem phần hiệu năng trong [README.md](README.md#performance-rules) |

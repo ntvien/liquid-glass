@@ -139,6 +139,10 @@ public final class io/github/ntvien/liquidglass/component/ComposableSingletons$L
 	public final fun getLambda$-2039508180$liquidglass ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/github/ntvien/liquidglass/component/LiquidGradientBackgroundKt {
+	public static final fun LiquidGradientBackground-cf5BqRc (Landroidx/compose/ui/Modifier;ZJLjava/util/List;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/github/ntvien/liquidglass/component/LiquidMenuDivider : io/github/ntvien/liquidglass/component/LiquidMenuEntry {
 	public static final field $stable I
 	public static final field INSTANCE Lio/github/ntvien/liquidglass/component/LiquidMenuDivider;

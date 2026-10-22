@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import io.github.ntvien.liquidglass.GlassDefaults
 import io.github.ntvien.liquidglass.LiquidGlassScene
 import io.github.ntvien.liquidglass.LiquidGlassTheme
+import io.github.ntvien.liquidglass.component.LiquidGradientBackground
 import io.github.ntvien.liquidglass.component.LiquidMenuButton
 import io.github.ntvien.liquidglass.component.LiquidMenuDivider
 import io.github.ntvien.liquidglass.component.LiquidMenuItem
@@ -75,7 +76,7 @@ fun CatalogScreen() {
     val muted = TextStyle(fontSize = 13.sp, lineHeight = 18.sp, color = colors.contentMuted)
 
     LiquidGlassScene(
-        background = { GradientBackground(dark) },
+        background = { LiquidGradientBackground(dark = dark) },
         overlay = {
             LiquidTabBar(
                 tabs = tabs,

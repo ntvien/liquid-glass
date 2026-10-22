@@ -3,6 +3,15 @@
 All notable changes to this project are documented here. The project follows [Semantic Versioning](https://semver.org/);
 while the version is 0.x the public API may still change between minor versions.
 
+## Unreleased
+
+- `LiquidGradientBackground(dark, baseColor, blobColors)`: the sample's background is now in the library, so a
+  `LiquidGlassScene` has something to refract without copying code. Soft color blobs drawn once into a
+  quarter-resolution bitmap; `baseColor` and up to 4 `blobColors` for brand colors. Looks the same as the sample.
+- The baseline profile shipped in the AAR no longer lists the sample app's classes (258 rules, `CatalogScreenKt`,
+  `MainActivity`, …): its filter `io.github.ntvien.liquidglass.**` also matched `io.github.ntvien.liquidglass.sample`.
+  The rules did nothing in an app (those classes are not in it) but exposed the sample's class names.
+
 ## 0.3.0 — 2026-10-17
 
 Performance only: the public API and the look are unchanged. Galaxy S23 Ultra, default settings, 0.2.0 and 0.3.0

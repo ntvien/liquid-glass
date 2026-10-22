@@ -56,6 +56,7 @@ import io.github.ntvien.liquidglass.GlassLook
 import io.github.ntvien.liquidglass.GlassQuality
 import io.github.ntvien.liquidglass.LiquidGlassScene
 import io.github.ntvien.liquidglass.LiquidGlassTheme
+import io.github.ntvien.liquidglass.component.LiquidGradientBackground
 import io.github.ntvien.liquidglass.component.LiquidMenuButton
 import io.github.ntvien.liquidglass.component.LiquidMenuDivider
 import io.github.ntvien.liquidglass.component.LiquidMenuItem
@@ -67,7 +68,6 @@ import io.github.ntvien.liquidglass.component.LiquidTabBarDefaults
 import io.github.ntvien.liquidglass.component.LiquidTabLabels
 import io.github.ntvien.liquidglass.liquidGlass
 import io.github.ntvien.liquidglass.rememberGlassInteraction
-import io.github.ntvien.liquidglass.sample.GradientBackground
 import io.github.ntvien.liquidglass.sample.SampleIcons
 import kotlinx.coroutines.launch
 
@@ -135,7 +135,7 @@ fun SettingsAwareTheme(reduceEffects: Boolean, content: @Composable () -> Unit) 
 @Composable
 fun BasicScreen() {
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) }, // see sample/SampleArt.kt
+        background = { LiquidGradientBackground() },
     ) {
         Column(
             Modifier.fillMaxSize().statusBarsPadding().padding(16.dp),
@@ -250,7 +250,7 @@ fun TabBarScreen() {
     val homeList = rememberLazyListState()
     val scope = rememberCoroutineScope()
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) },
+        background = { LiquidGradientBackground() },
         overlay = {
             LiquidTabBar(
                 tabs = listOf(
@@ -290,7 +290,7 @@ private fun HomeList(state: LazyListState) {
 fun TabBarSelectedOnlyWithAction(onAdd: () -> Unit) {
     var tab by rememberSaveable { mutableStateOf("home") }
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) },
+        background = { LiquidGradientBackground() },
         overlay = {
             LiquidTabBar(
                 tabs = listOf(
@@ -322,7 +322,7 @@ fun TabBarWithNavigation() {
     val nav = rememberNavController()
     val route = nav.currentBackStackEntryAsState().value?.destination?.route ?: "home"
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) },
+        background = { LiquidGradientBackground() },
         overlay = {
             LiquidTabBar(
                 tabs = listOf(LiquidTab("home", "Home", homeIcon), LiquidTab("me", "Me", personIcon)),

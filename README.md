@@ -151,7 +151,7 @@ Each screen has exactly one `LiquidGlassScene`. The `background` is what the gla
 @Composable
 fun BasicScreen() {
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) }, // see sample/SampleArt.kt
+        background = { LiquidGradientBackground() },
     ) {
         Column(
             Modifier.fillMaxSize().statusBarsPadding().padding(16.dp),
@@ -177,7 +177,8 @@ LiquidGlassScene(
 
 Background rules:
 - Draw it **once**. A bitmap or a photo is ideal. A gradient redrawn every frame repaints the whole screen behind every glass element;
-  `GradientBackground` in the sample draws its blobs once into a quarter-resolution bitmap.
+  `LiquidGradientBackground` draws its blobs once into a quarter-resolution bitmap. Pass `baseColor` and up to 4
+  `blobColors` for your brand.
 - Keep it smooth (gradients, blurred photos). Then the glass needs no blur and stays cheap.
 - Glass placed in the content refracts the background. Glass placed in `overlay` (the tab bar) also refracts the
   scrolling content on capable devices.
@@ -280,7 +281,7 @@ fun TabBarScreen() {
     val homeList = rememberLazyListState()
     val scope = rememberCoroutineScope()
     LiquidGlassScene(
-        background = { GradientBackground(dark = false) },
+        background = { LiquidGradientBackground() },
         overlay = {
             LiquidTabBar(
                 tabs = listOf(
@@ -348,7 +349,7 @@ LiquidTabBar(
 val nav = rememberNavController()
 val route = nav.currentBackStackEntryAsState().value?.destination?.route ?: "home"
 LiquidGlassScene(
-    background = { GradientBackground(dark = false) },
+    background = { LiquidGradientBackground() },
     overlay = {
         LiquidTabBar(
             tabs = listOf(LiquidTab("home", "Home", homeIcon), LiquidTab("me", "Me", personIcon)),
@@ -471,7 +472,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | Problem | Cause and fix |
 |---|---|
 | Glass looks flat and frosted, no lens | No `LiquidGlassTheme` around it, the element is outside a `LiquidGlassScene`, the device runs Android 12 or lower, Battery Saver is on, or `reduceEffects = true` |
-| Tab bar looks like white plastic, no lens | Background too pale (use strong color blobs, 35–60 % alpha, see `sample/SampleArt.kt`) or Android 12 (no lens). By default the bar refracts only the background; `overlaySamplesContent = true` also bends the content scrolling under it (measure first) |
+| Tab bar looks like white plastic, no lens | Background too pale (use strong color blobs, 35–60 % alpha, as `LiquidGradientBackground` does) or Android 12 (no lens). By default the bar refracts only the background; `overlaySamplesContent = true` also bends the content scrolling under it (measure first) |
 | Last list item hidden behind the tab bar | Add `LiquidTabBarDefaults.contentBottomPadding()` to the list's bottom padding |
 | Tab bar disappears when typing | Intended. Pass `hideWhenImeVisible = false` to keep it |
 | Scrolling stutters | Too much real glass on screen, background redrawn every frame, or a debug build. See [Performance rules](#performance-rules) |
@@ -484,6 +485,7 @@ val showSparkles = LiquidGlassTheme.quality != GlassQuality.Off
 | `LiquidGlassTheme(colors, look, reduceEffects, overlaySamplesContent)` | Root. Chooses `GlassQuality` and `GlassLook` once, follows Battery Saver. Read values with `LiquidGlassTheme.colors / quality / look` |
 | `GlassColors.light()` / `dark()` / `copy(...)` | Colors of glass and components |
 | `LiquidGlassScene(background, overlay, content)` | Frame of a screen with glass. One per screen |
+| `LiquidGradientBackground(dark, baseColor, blobColors)` | Ready-made scene background: soft color blobs drawn once into a quarter-resolution bitmap |
 | `Modifier.liquidGlass(style, shape, interaction)` | Draws glass behind any element |
 | `GlassDefaults.chrome() / card() / control() / accent() / frost()` | Presets, plus `CardShape`, `ControlShape`, `PillShape`, `ContinuousCardShape`, `ContinuousPillShape` |
 | `GlassStyle`, `GlassKind` | Make your own recipe (start from a preset and `copy`) |
@@ -577,8 +579,8 @@ Cold start, time to initial display (median of 10 starts):
 - `RoundedCornerShape` for anything repeated or scrolling: other shapes are clipped with a path on every frame. The
   continuous shapes (`ContinuousCardShape`, `ContinuousPillShape`) are for a few large blocks only: the tab bar and its
   droplet, hero cards.
-- Draw the `LiquidGlassScene` background **once** (for example into a quarter-resolution bitmap, see
-  `sample/SampleArt.kt`). A smooth background also means the glass needs no blur.
+- Draw the `LiquidGlassScene` background **once** (for example into a quarter-resolution bitmap, like
+  `LiquidGradientBackground`). A smooth background also means the glass needs no blur.
 - Content refraction under the tab bar is the biggest single cost (see above): it is off by default except with
   `Rich` and on high-end devices. Turn it on with `overlaySamplesContent = true` only after measuring.
 - Shadows only on floating chrome and the primary button (the presets already do). The `Optimized` look draws accent
