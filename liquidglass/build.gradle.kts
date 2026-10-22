@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.ntvien"
-version = "0.3.0"
+version = "0.4.0"
 
 android {
     namespace = "io.github.ntvien.liquidglass"

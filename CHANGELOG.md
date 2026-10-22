@@ -3,7 +3,9 @@
 All notable changes to this project are documented here. The project follows [Semantic Versioning](https://semver.org/);
 while the version is 0.x the public API may still change between minor versions.
 
-## Unreleased
+## 0.4.0 — 2026-10-22
+
+One new API, `LiquidGradientBackground`; existing APIs and the look are unchanged.
 
 - `LiquidGradientBackground(dark, baseColor, blobColors)`: the sample's background is now in the library, so a
   `LiquidGlassScene` has something to refract without copying code. Soft color blobs drawn once into a

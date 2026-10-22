@@ -33,7 +33,7 @@ Rồi thêm thư viện:
 
 ```kotlin
 dependencies {
-    implementation("com.github.ntvien:liquid-glass:v0.3.0")
+    implementation("com.github.ntvien:liquid-glass:v0.4.0")
 }
 ```
 
